@@ -1,0 +1,44 @@
+# Dependencies
+node_modules/
+.pnp
+.pnp.js
+
+# Build outputs
+dist/
+dist-ssr/
+*.local
+
+# Local reference, raw Google Flow videos, agent tooling & deployment metadata (do not commit)
+_reference/
+_flow_raw/
+.agents/
+.codex/
+.impeccable/
+.vercel
+skills-lock.json
+PRODUCT.md
+
+# Raw source screenshots/photos (optimized WebP assets live in src/assets/images/)
+public/images/
+
+# Environment variables
+.env
+.env.local
+.env.*.local
+
+# Editor & OS files
+.vscode/*
+!.vscode/extensions.json
+.idea
+.DS_Store
+Thumbs.db
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+pnpm-debug.log*

@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <defs>
+    <linearGradient id="hf-solar" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#fef0c7" />
+      <stop offset="52%" stop-color="#f59e0b" />
+      <stop offset="100%" stop-color="#ea580c" />
+    </linearGradient>
+  </defs>
+  <rect width="64" height="64" rx="14" fill="#070607" />
+  <!-- Original HF Geometric Eclipse Monogram -->
+  <path
+    d="M48 16 A22 22 0 1 0 48 48"
+    fill="none"
+    stroke="url(#hf-solar)"
+    stroke-width="2.6"
+    stroke-linecap="round"
+  />
+  <path
+    d="M23 20 V44 M23 32 H39 M39 20 V32 M39 20 H49 M39 32 H46"
+    fill="none"
+    stroke="#f5efe6"
+    stroke-width="3.2"
+    stroke-linecap="square"
+    stroke-linejoin="miter"
+  />
+  <circle cx="49" cy="44" r="3.2" fill="#f59e0b" />
+</svg>

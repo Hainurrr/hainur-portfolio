@@ -1,0 +1,29 @@
+{
+  "name": "hainur-fadillah-portfolio",
+  "private": true,
+  "version": "2.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc --noEmit && vite build",
+    "preview": "vite preview",
+    "flow:convert": "python scripts/flow_to_sequence.py"
+  },
+  "dependencies": {
+    "@fontsource-variable/plus-jakarta-sans": "^5.2.5",
+    "@fontsource-variable/syne": "^5.2.5",
+    "@fontsource/jetbrains-mono": "^5.2.5",
+    "@phosphor-icons/react": "^2.1.7",
+    "animejs": "3.2.2",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0"
+  },
+  "devDependencies": {
+    "@types/animejs": "^3.1.13",
+    "@types/react": "^19.0.10",
+    "@types/react-dom": "^19.0.4",
+    "@vitejs/plugin-react": "^4.3.4",
+    "typescript": "^5.8.2",
+    "vite": "^6.2.2"
+  }
+}

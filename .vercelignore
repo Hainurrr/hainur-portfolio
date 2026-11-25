@@ -1,0 +1,9 @@
+_reference/
+_flow_raw/
+.agents/
+.codex/
+.impeccable/
+scripts/
+skills-lock.json
+PRODUCT.md
+public/images/

@@ -1,0 +1,2212 @@
+/* ==========================================================================
+   Hainur Fadillah | Solar Eclipse & 3D Globe Portfolio Stylesheet
+   Craft-floor & WCAG 2.1 AA compliant · rem typography (>= 12px) · 44px touch targets
+   ========================================================================== */
+
+.site-shell {
+  position: relative;
+  min-width: 320px;
+  overflow-x: clip;
+  background: var(--bg);
+}
+
+.ambient-dust {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 0;
+  pointer-events: none;
+}
+
+.site-shell main,
+.site-shell footer {
+  position: relative;
+  z-index: 2;
+}
+
+/* Anchor scroll offset below fixed 74px navbar */
+section[id],
+footer[id],
+article[id^="node-"] {
+  scroll-margin-top: calc(var(--nav-h) + 24px);
+}
+
+/* Suppress CSS transform/clip-path transitions while Anime.js owns the element */
+[data-animating="true"] {
+  transition-property: border-color, background-color, color, opacity !important;
+}
+
+/* ---------- Buttons & Shared Editorial Headings ---------- */
+
+.btn-solar,
+a.btn-solar {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 46px;
+  padding: 12px 22px;
+  border-radius: var(--radius-sm);
+  background: var(--solar);
+  color: var(--solar-ink);
+  font-weight: 700;
+  font-size: 0.9375rem;
+  transition:
+    transform 0.28s var(--ease),
+    background-color 0.25s var(--ease);
+}
+
+.btn-solar:hover {
+  background: #fbbf24;
+  transform: translateY(-2px);
+}
+
+.btn-outline,
+a.btn-outline {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 46px;
+  padding: 12px 18px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--line-strong);
+  background: var(--bg-elevated);
+  color: var(--ink);
+  font-size: 0.9375rem;
+  font-weight: 500;
+  transition:
+    border-color 0.25s,
+    background-color 0.25s,
+    transform 0.25s var(--ease);
+}
+
+.btn-outline:hover {
+  border-color: var(--line-solar);
+  background: rgba(245, 158, 11, 0.1);
+  transform: translateY(-1px);
+}
+
+.ed-sec {
+  position: relative;
+  width: min(var(--max-w), calc(100% - var(--gut) * 2));
+  margin: 0 auto;
+  padding: clamp(82px, 9.5vw, 134px) 0 0;
+}
+
+/* Scroll-scrubbed solar chapter divider inviting an unhurried reading pause between sections */
+.section-rule {
+  width: 100%;
+  height: 1px;
+  margin-bottom: clamp(32px, 4vw, 48px);
+  transform-origin: left center;
+  background: linear-gradient(
+    90deg,
+    rgba(245, 158, 11, 0.72) 0%,
+    rgba(254, 240, 199, 0.24) 38%,
+    rgba(245, 239, 230, 0.06) 100%
+  );
+}
+
+.ed-sec-head {
+  margin-bottom: clamp(24px, 3.2vw, 38px);
+}
+
+.ed-sec-head-split {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 20px 28px;
+  margin-bottom: clamp(28px, 3.6vw, 42px);
+}
+
+.ed-head-copy {
+  max-width: 65ch;
+}
+
+.ed-h2 {
+  margin: 0;
+  font-family: var(--display);
+  font-size: clamp(1.85rem, 3.6vw, 2.85rem);
+  line-height: 1.1;
+  letter-spacing: -0.025em;
+  font-weight: 700;
+  color: var(--ink);
+  text-wrap: balance;
+}
+
+.ed-sub {
+  margin: 12px 0 0;
+  font-size: 0.975rem;
+  line-height: 1.65;
+  color: var(--ink-soft);
+  max-width: 66ch;
+}
+
+.ed-inline-link {
+  color: var(--solar-bright);
+  text-decoration: underline;
+  text-decoration-color: rgba(245, 158, 11, 0.55);
+  transition: color 0.2s, text-decoration-color 0.2s;
+}
+
+.ed-inline-link:hover {
+  color: var(--solar);
+  text-decoration-color: var(--solar);
+}
+
+.inline-with-icon {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+}
+
+/* ---------- Minimal Floating Top Language Switcher ---------- */
+
+.top-rail {
+  position: fixed;
+  inset: 0 0 auto;
+  z-index: 60;
+  pointer-events: none;
+}
+
+.top-rail-inner {
+  width: min(var(--max-w), calc(100% - var(--gut) * 2));
+  margin: 0 auto;
+  height: var(--nav-h);
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+}
+
+.hf-monogram {
+  color: var(--ink);
+  transition: transform 0.45s var(--ease);
+}
+
+/* Bilingual ID / EN Switcher */
+.lang-switch {
+  pointer-events: auto;
+  display: inline-flex;
+  padding: 2px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--line-strong);
+  background: rgba(17, 14, 15, 0.84);
+  backdrop-filter: blur(12px);
+}
+
+.lang-switch button {
+  min-width: 38px;
+  min-height: 36px;
+  padding: 0 9px;
+  border-radius: 6px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  color: var(--ink-muted);
+  transition: background-color 0.2s, color 0.2s;
+}
+
+.lang-switch button:hover {
+  color: var(--ink);
+}
+
+.lang-switch button.is-active {
+  background: var(--solar);
+  color: var(--solar-ink);
+}
+
+/* ---------- Act I: Name-Only -> Google Flow Arrival -> Interactive 3D Planet -> Google Flow Shatter -> 5 Works ---------- */
+
+.obs-hero-runway {
+  position: relative;
+  height: 700vh;
+}
+
+.obs-hero-runway.is-reduced {
+  height: auto;
+  min-height: min(860px, 100dvh);
+}
+
+.obs-hero-sticky {
+  position: sticky;
+  top: 0;
+  height: 100dvh;
+  width: 100%;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  background: transparent;
+}
+
+.obs-hero-runway.is-reduced .obs-hero-sticky {
+  position: relative;
+  height: min(860px, 100dvh);
+}
+
+.obs-flow-layer {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  will-change: opacity;
+}
+
+.obs-flow-shatter {
+  z-index: 2;
+  will-change: transform, opacity;
+}
+
+.obs-shatter-bloom {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  pointer-events: none;
+  opacity: 0;
+  visibility: hidden;
+  background: radial-gradient(
+    ellipse 64% 52% at 50% 48%,
+    rgba(254, 215, 136, 0.24) 0%,
+    rgba(245, 158, 11, 0.12) 34%,
+    rgba(234, 88, 12, 0.04) 58%,
+    transparent 78%
+  );
+  mix-blend-mode: screen;
+}
+
+.obs-flow-canvas {
+  width: 100%;
+  height: 100%;
+}
+
+.obs-planet-layer {
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  will-change: opacity;
+}
+
+.obs-stage-vignette {
+  position: absolute;
+  inset: 0;
+  z-index: 4;
+  pointer-events: none;
+  background: linear-gradient(180deg, rgba(7, 6, 7, 0.45) 0%, transparent 14%, transparent 86%, #070607 100%);
+}
+
+.obs-hero-content {
+  position: relative;
+  z-index: 5;
+  width: min(var(--max-w), calc(100% - var(--gut) * 2));
+  margin: 0 auto;
+  pointer-events: none;
+}
+
+.obs-hero-copy {
+  width: fit-content;
+  max-width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  transform-origin: center center;
+  will-change: transform, opacity;
+}
+
+.obs-h1 {
+  margin: 0;
+  font-family: var(--display);
+  font-size: clamp(2.35rem, 5.2vw, 5.1rem);
+  line-height: 0.96;
+  letter-spacing: -0.03em;
+  font-weight: 800;
+  color: var(--ink);
+  display: flex;
+  flex-direction: column;
+  text-shadow: 0 6px 36px rgba(0, 0, 0, 0.72);
+}
+
+.obs-h1-accent {
+  color: var(--solar);
+}
+
+.split-line {
+  display: inline-flex;
+  flex-wrap: nowrap;
+  white-space: nowrap;
+}
+
+.split-char-mask {
+  display: inline-block;
+  overflow: hidden;
+  padding-bottom: 0.06em;
+  margin-bottom: -0.06em;
+}
+
+.split-char {
+  display: inline-block;
+}
+
+.obs-hero-meta {
+  max-width: min(460px, 100%);
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  will-change: transform, opacity;
+}
+
+.obs-pillars {
+  list-style: none;
+  margin: 24px 0 0;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.obs-pillars li {
+  padding: 6px 12px;
+  border-radius: 6px;
+  border: 1px solid var(--line);
+  background: rgba(17, 14, 15, 0.78);
+  backdrop-filter: blur(8px);
+  font-size: 0.8125rem;
+  font-weight: 500;
+  color: var(--ink-soft);
+}
+
+.obs-actions {
+  margin-top: 26px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+/* ---------- Monumental Borderless 3D Solar Eclipse & Cassiopeia Planet ---------- */
+
+.orb-monument {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  touch-action: pan-y;
+}
+
+.orb-canvas,
+.orb-overlay {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.orb-reticle {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 20px;
+  height: 20px;
+  margin: -10px 0 0 -10px;
+  border-radius: 50%;
+  border: 1px solid rgba(254, 240, 199, 0.62);
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.16s;
+  z-index: 6;
+}
+
+.orb-reticle[data-on="true"] {
+  opacity: 1;
+}
+
+.orb-monument-foot {
+  position: absolute;
+  left: var(--gut);
+  right: var(--gut);
+  bottom: 22px;
+  z-index: 8;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  pointer-events: none;
+}
+
+.orb-drag-whisper {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 0.72rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--ink-muted);
+}
+
+.orb-coord-whisper {
+  margin-left: auto;
+  font-size: 0.75rem;
+  letter-spacing: 0.08em;
+  color: var(--ink-muted);
+}
+
+/* Non-overlapping Astronomical Star-Chart Callout Plates (linked via Canvas hairline leaders) */
+.orb-star-node {
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 10;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 36px;
+  padding: 0;
+  border-radius: 7px;
+  translate: -50% -50%;
+  text-align: left;
+  transition: opacity 0.2s;
+  will-change: transform, opacity;
+}
+
+.orb-star-node:hover,
+.orb-star-node.is-active {
+  z-index: 18;
+}
+
+/* Crisp celestial chart plate keeping constellation lines & stars clear */
+.orb-star-callout {
+  display: flex;
+  flex-direction: column;
+  padding: 4px 9px;
+  border-radius: 7px;
+  border: 1px solid rgba(254, 240, 199, 0.16);
+  background: rgba(7, 6, 7, 0.78);
+  line-height: 1.22;
+  transition:
+    background-color 0.22s,
+    border-color 0.22s;
+}
+
+.orb-star-node.is-contributor .orb-star-callout {
+  border-color: rgba(45, 212, 191, 0.28);
+}
+
+.orb-star-node:hover .orb-star-callout,
+.orb-star-node.is-active .orb-star-callout {
+  background: rgba(14, 10, 9, 0.94);
+  border-color: rgba(245, 158, 11, 0.62);
+}
+
+.orb-star-node.is-contributor:hover .orb-star-callout,
+.orb-star-node.is-contributor.is-active .orb-star-callout {
+  border-color: rgba(45, 212, 191, 0.72);
+}
+
+.orb-star-callout strong {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 5px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--ink);
+  white-space: nowrap;
+}
+
+.orb-star-greek {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--solar);
+}
+
+.orb-star-node.is-contributor .orb-star-greek {
+  color: var(--teal);
+}
+
+.orb-star-callout em {
+  font-style: normal;
+  font-size: 0.75rem;
+  color: var(--solar-bright);
+  white-space: nowrap;
+}
+
+.orb-star-node.is-contributor .orb-star-callout em {
+  color: var(--teal-bright);
+}
+
+/* On-demand floating detail popover triggered only when a Cassiopeia star is clicked */
+.orb-star-popover {
+  position: absolute;
+  right: var(--gut);
+  bottom: 58px;
+  width: min(440px, calc(100% - var(--gut) * 2));
+  z-index: 26;
+  padding: 16px 18px;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--line-solar);
+  background: rgba(11, 9, 10, 0.94);
+  backdrop-filter: blur(14px);
+  box-shadow: 0 18px 42px rgba(0, 0, 0, 0.68);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.orb-star-popover.is-contributor {
+  border-color: var(--line-teal);
+  background: rgba(10, 18, 18, 0.95);
+}
+
+.orb-popover-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.orb-popover-meta {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.orb-popover-star {
+  font-size: 0.78rem;
+  color: var(--ink-muted);
+}
+
+.orb-popover-role {
+  padding: 3px 9px;
+  border-radius: 6px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  background: rgba(245, 158, 11, 0.16);
+  color: var(--solar-bright);
+}
+
+.orb-popover-role.is-contributor {
+  background: var(--teal-soft);
+  color: var(--teal-bright);
+}
+
+.orb-popover-close {
+  width: 34px;
+  height: 34px;
+  border-radius: 8px;
+  border: 1px solid var(--line-strong);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--ink-soft);
+  flex: 0 0 auto;
+  transition: border-color 0.2s, color 0.2s;
+}
+
+.orb-popover-close:hover {
+  border-color: var(--line-solar);
+  color: var(--solar-bright);
+}
+
+.orb-popover-title {
+  margin: 0;
+  font-family: var(--display);
+  font-size: 1.08rem;
+  font-weight: 700;
+  color: var(--ink);
+}
+
+.orb-popover-desc {
+  margin: 0;
+  font-size: 0.85rem;
+  line-height: 1.5;
+  color: var(--ink-soft);
+}
+
+.orb-popover-actions {
+  margin-top: 2px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.orb-btn-ghost,
+.orb-btn-solid {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 38px;
+  padding: 0 13px;
+  border-radius: var(--radius-sm);
+  font-size: 0.8125rem;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.orb-btn-ghost {
+  border: 1px solid var(--line-strong);
+  color: var(--ink);
+  transition: border-color 0.2s, background-color 0.2s;
+}
+
+.orb-btn-ghost:hover {
+  border-color: var(--line-solar);
+  background: rgba(245, 158, 11, 0.08);
+}
+
+.orb-btn-solid {
+  background: var(--solar);
+  color: var(--solar-ink);
+}
+
+.orb-btn-solid:hover {
+  background: #fbbf24;
+}
+
+.orb-star-popover.is-contributor .orb-btn-solid {
+  background: var(--teal);
+  color: #042f2e;
+}
+
+/* ---------- Act II: Real-Evidence Works Gallery (emerges directly from exploding meteors) ---------- */
+
+.works-sec {
+  position: relative;
+  z-index: 12;
+  margin-top: -120vh;
+  padding-top: clamp(48px, 6vw, 84px);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .works-sec {
+    margin-top: 0;
+  }
+}
+
+.ed-filter-bar {
+  position: relative;
+  display: inline-flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.ed-filter-pill {
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 0;
+  border-radius: var(--radius-sm);
+  background: var(--solar);
+  pointer-events: none;
+  opacity: 0;
+}
+
+.ed-filter-btn {
+  position: relative;
+  z-index: 1;
+  min-height: 44px;
+  padding: 0 16px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--line-strong);
+  background: var(--bg-elevated);
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--ink-soft);
+  transition: border-color 0.2s, color 0.22s, background-color 0.22s;
+}
+
+.ed-filter-btn:hover {
+  color: var(--ink);
+  border-color: var(--line-solar);
+}
+
+.ed-filter-btn.is-active {
+  background: transparent;
+  border-color: transparent;
+  color: var(--solar-ink);
+  font-weight: 700;
+}
+
+.asteroid-field {
+  position: relative;
+  width: 100%;
+  min-height: 520px;
+}
+
+.asteroid-field.is-free {
+  height: clamp(820px, 90vh, 980px);
+  overflow: visible;
+  touch-action: pan-y;
+}
+
+.asteroid-field.is-stacked {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 24px;
+}
+
+.asteroid-debris-layer {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  overflow: hidden;
+  z-index: 0;
+}
+
+@keyframes pebble-drift {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0) rotate(var(--peb-rot, 0deg));
+  }
+  50% {
+    transform: translate3d(14px, -18px, 0) rotate(calc(var(--peb-rot, 0deg) + 26deg));
+  }
+}
+
+.asteroid-pebble {
+  position: absolute;
+  background: linear-gradient(140deg, rgba(64, 52, 46, 0.55) 0%, rgba(18, 15, 16, 0.88) 70%);
+  border: 1px solid rgba(245, 158, 11, 0.14);
+  opacity: 0.55;
+  animation: pebble-drift 19s ease-in-out infinite;
+}
+
+@keyframes asteroid-bob-mobile {
+  0%,
+  100% {
+    transform: translateY(0px) rotate(-0.6deg);
+  }
+  50% {
+    transform: translateY(-7px) rotate(0.6deg);
+  }
+}
+
+.asteroid-body {
+  position: relative;
+  width: clamp(296px, 26vw, 358px);
+  cursor: grab;
+  user-select: none;
+  filter: drop-shadow(0 18px 28px rgba(0, 0, 0, 0.72)) drop-shadow(0 0 18px rgba(245, 158, 11, 0.14));
+  transition: filter 0.3s var(--ease);
+  will-change: transform, opacity;
+}
+
+.asteroid-field.is-free .asteroid-body {
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+.asteroid-field.is-stacked .asteroid-body {
+  width: min(440px, 100%);
+  margin: 0 auto;
+  cursor: pointer;
+  animation: asteroid-bob-mobile 7.5s ease-in-out infinite;
+}
+
+.asteroid-field.is-stacked .asteroid-body:nth-child(even) {
+  animation-delay: -3.2s;
+}
+
+.asteroid-body:active {
+  cursor: grabbing;
+}
+
+.asteroid-body:hover,
+.asteroid-body:focus-visible,
+.asteroid-body.is-selected {
+  filter: drop-shadow(0 22px 38px rgba(0, 0, 0, 0.82)) drop-shadow(0 0 28px rgba(245, 158, 11, 0.36));
+}
+
+.asteroid-body.is-contributor {
+  filter: drop-shadow(0 18px 28px rgba(0, 0, 0, 0.72)) drop-shadow(0 0 18px rgba(45, 212, 191, 0.18));
+}
+
+.asteroid-body.is-contributor:hover,
+.asteroid-body.is-contributor:focus-visible,
+.asteroid-body.is-contributor.is-selected {
+  filter: drop-shadow(0 22px 38px rgba(0, 0, 0, 0.82)) drop-shadow(0 0 30px rgba(45, 212, 191, 0.44));
+}
+
+/* Fiery comet tail streaking back toward the shattered planet core during scroll arrival */
+.ast-meteor-tail {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  margin-top: -20px;
+  width: 300px;
+  height: 40px;
+  z-index: 0;
+  pointer-events: none;
+  opacity: 0;
+  visibility: hidden;
+  transform-origin: 0% 50%;
+  border-radius: 999px;
+  background: linear-gradient(
+    90deg,
+    rgba(254, 240, 199, 0.94) 0%,
+    rgba(245, 158, 11, 0.64) 28%,
+    rgba(234, 88, 12, 0.24) 64%,
+    transparent 100%
+  );
+  filter: blur(11px);
+  mix-blend-mode: screen;
+}
+
+.asteroid-body.is-contributor .ast-meteor-tail {
+  background: linear-gradient(
+    90deg,
+    rgba(204, 251, 241, 0.94) 0%,
+    rgba(45, 212, 191, 0.64) 30%,
+    rgba(245, 158, 11, 0.26) 66%,
+    transparent 100%
+  );
+}
+
+/* Sculpted volcanic obsidian rock body with generous perimeter safe-inset */
+.asteroid-rock {
+  position: relative;
+  z-index: 2;
+  padding: 30px 32px 32px;
+  background:
+    radial-gradient(ellipse 90% 60% at 24% 12%, rgba(245, 158, 11, 0.14) 0%, transparent 56%),
+    radial-gradient(circle at 82% 88%, rgba(234, 88, 12, 0.1) 0%, transparent 52%),
+    linear-gradient(155deg, #1b1615 0%, #110e0f 48%, #0a090a 100%);
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  overflow: hidden;
+}
+
+.asteroid-body.is-contributor .asteroid-rock {
+  background:
+    radial-gradient(ellipse 90% 60% at 24% 12%, rgba(45, 212, 191, 0.18) 0%, transparent 58%),
+    radial-gradient(circle at 82% 88%, rgba(245, 158, 11, 0.1) 0%, transparent 52%),
+    linear-gradient(155deg, #121d1d 0%, #0d1314 50%, #090b0c 100%);
+}
+
+/* Molten ember shell covering asteroid face when still small during meteor burst */
+.ast-meteor-core {
+  position: absolute;
+  inset: 0;
+  z-index: 6;
+  background: radial-gradient(
+    ellipse 74% 66% at 50% 42%,
+    rgba(254, 240, 199, 0.95) 0%,
+    rgba(245, 158, 11, 0.78) 38%,
+    rgba(194, 65, 12, 0.5) 72%,
+    rgba(17, 13, 12, 0.88) 100%
+  );
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
+
+.asteroid-body.is-contributor .ast-meteor-core {
+  background: radial-gradient(
+    ellipse 74% 66% at 50% 42%,
+    rgba(204, 251, 241, 0.95) 0%,
+    rgba(45, 212, 191, 0.78) 40%,
+    rgba(245, 158, 11, 0.4) 74%,
+    rgba(12, 20, 20, 0.88) 100%
+  );
+}
+
+.asteroid-media {
+  position: relative;
+  width: calc(100% - 14px);
+  margin: 0 auto;
+  aspect-ratio: 16 / 9;
+  border-radius: 9px;
+  overflow: hidden;
+  border: 1px solid rgba(254, 240, 199, 0.16);
+  background: #080708;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.45);
+}
+
+.asteroid-body.is-contributor .asteroid-media {
+  border-color: rgba(45, 212, 191, 0.28);
+}
+
+.asteroid-shot {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: top center;
+  transition: transform 0.45s var(--ease);
+}
+
+.asteroid-body:hover .asteroid-shot {
+  transform: scale(1.04);
+}
+
+.asteroid-video-preview {
+  display: block;
+  pointer-events: none;
+}
+
+.asteroid-info {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  padding: 0 4px;
+}
+
+.asteroid-top-meta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.asteroid-role {
+  padding: 3px 8px;
+  border-radius: 5px;
+  font-size: 0.7rem;
+  font-weight: 600;
+  background: rgba(245, 158, 11, 0.14);
+  color: var(--solar-bright);
+  border: 1px solid rgba(245, 158, 11, 0.28);
+  white-space: nowrap;
+}
+
+.asteroid-role.is-contributor {
+  background: var(--teal-soft);
+  color: var(--teal-bright);
+  border-color: rgba(45, 212, 191, 0.42);
+}
+
+.asteroid-star-inline {
+  font-size: 0.7rem;
+  letter-spacing: 0.05em;
+  color: var(--ink-muted);
+  white-space: nowrap;
+}
+
+.asteroid-star-inline.is-contributor {
+  color: rgba(94, 234, 212, 0.85);
+}
+
+.asteroid-info h3 {
+  margin: 1px 0 0;
+  font-family: var(--display);
+  font-size: 1.14rem;
+  line-height: 1.18;
+  color: var(--ink);
+}
+
+.asteroid-brief {
+  margin: 0;
+  font-size: 0.8125rem;
+  line-height: 1.48;
+  color: var(--ink-soft);
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.asteroid-foot {
+  margin-top: 4px;
+  padding: 9px 10px 0;
+  border-top: 1px solid rgba(245, 239, 230, 0.09);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.asteroid-metric {
+  font-size: 0.74rem;
+  font-weight: 600;
+  color: var(--solar-bright);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.asteroid-metric.is-contributor {
+  color: var(--teal-bright);
+}
+
+.asteroid-direct-link {
+  flex: 0 0 auto;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  min-height: 32px;
+  padding: 0 11px;
+  border-radius: 6px;
+  border: 1px solid rgba(245, 158, 11, 0.36);
+  background: rgba(245, 158, 11, 0.14);
+  color: var(--solar-bright);
+  font-size: 0.75rem;
+  font-weight: 600;
+  transition: background-color 0.2s, color 0.2s;
+}
+
+.asteroid-direct-link:hover {
+  background: var(--solar);
+  color: var(--solar-ink);
+}
+
+.asteroid-direct-link.is-contributor {
+  border-color: rgba(45, 212, 191, 0.42);
+  background: var(--teal-soft);
+  color: var(--teal-bright);
+}
+
+.asteroid-direct-link.is-contributor:hover {
+  background: var(--teal);
+  color: #042f2e;
+}
+
+/* Glowing SVG volcanic polygon outline + rock facet edges */
+.asteroid-rim-svg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 4;
+  pointer-events: none;
+  overflow: visible;
+}
+
+.asteroid-rim-poly {
+  fill: none;
+  stroke: rgba(245, 158, 11, 0.44);
+  stroke-width: 1.6;
+  stroke-linejoin: bevel;
+  transition: stroke 0.28s, stroke-width 0.28s;
+}
+
+.asteroid-facet-line {
+  fill: none;
+  stroke: rgba(254, 240, 199, 0.14);
+  stroke-width: 1;
+}
+
+.asteroid-body:hover .asteroid-rim-poly,
+.asteroid-body:focus-visible .asteroid-rim-poly,
+.asteroid-body.is-selected .asteroid-rim-poly {
+  stroke: rgba(254, 240, 199, 0.92);
+  stroke-width: 2.2;
+}
+
+.asteroid-body.is-contributor .asteroid-rim-poly {
+  stroke: rgba(45, 212, 191, 0.52);
+}
+
+.asteroid-body.is-contributor:hover .asteroid-rim-poly,
+.asteroid-body.is-contributor:focus-visible .asteroid-rim-poly,
+.asteroid-body.is-contributor.is-selected .asteroid-rim-poly {
+  stroke: rgba(94, 234, 212, 0.96);
+  stroke-width: 2.2;
+}
+
+.nusantara-plate {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+.nusantara-flow-bg {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+}
+
+.nusantara-svg {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.nusa-label {
+  fill: var(--ink);
+  font-size: 11.5px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+}
+
+.nusa-sub {
+  fill: var(--ink-muted);
+  font-size: 10px;
+  letter-spacing: 0.04em;
+}
+
+.nusa-caption {
+  fill: var(--teal);
+  font-size: 11.5px;
+  letter-spacing: 0.1em;
+}
+
+@keyframes nusa-radar-pulse {
+  0% {
+    transform: scale(1);
+    opacity: 0.85;
+  }
+  100% {
+    transform: scale(2.8);
+    opacity: 0;
+  }
+}
+
+.nusa-radar-ping {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: nusa-radar-pulse 2.8s cubic-bezier(0.22, 1, 0.36, 1) infinite;
+}
+
+.flow-seq-canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+/* Shared verified dossier elements inside Asteroid Dossier Modal */
+.work-role-pill {
+  padding: 4px 10px;
+  border-radius: 6px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  background: rgba(245, 158, 11, 0.16);
+  color: var(--solar-bright);
+  border: 1px solid rgba(245, 158, 11, 0.34);
+}
+
+.work-role-pill.is-contributor {
+  background: var(--teal-soft);
+  color: var(--teal-bright);
+  border-color: rgba(45, 212, 191, 0.45);
+}
+
+.work-summary {
+  margin: 0;
+  font-size: 0.96rem;
+  line-height: 1.65;
+  color: var(--ink-soft);
+}
+
+.work-team-credit {
+  margin: 0;
+  padding: 10px 12px;
+  border-radius: var(--radius-sm);
+  border: 1px solid rgba(245, 158, 11, 0.28);
+  background: rgba(245, 158, 11, 0.08);
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  font-size: 0.825rem;
+  line-height: 1.5;
+  color: var(--solar-bright);
+}
+
+.work-team-credit svg {
+  flex: 0 0 auto;
+  margin-top: 2px;
+  color: var(--solar);
+}
+
+.work-contrib-notice {
+  padding: 10px 12px;
+  border-radius: var(--radius-sm);
+  border: 1px solid rgba(45, 212, 191, 0.42);
+  background: rgba(45, 212, 191, 0.11);
+  display: flex;
+  align-items: flex-start;
+  gap: 9px;
+  font-size: 0.825rem;
+  line-height: 1.55;
+  color: var(--teal-bright);
+}
+
+.work-contrib-notice svg {
+  color: var(--teal);
+  flex: 0 0 auto;
+  margin-top: 2px;
+}
+
+.work-highlights {
+  margin: 0;
+  padding-left: 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 0.875rem;
+  color: var(--ink-soft);
+}
+
+.work-stack {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.work-stack span {
+  padding: 4px 9px;
+  border-radius: 6px;
+  border: 1px solid var(--line);
+  font-size: 0.75rem;
+  color: var(--ink-muted);
+}
+
+.work-metric {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.work-metric strong {
+  font-family: var(--display);
+  font-size: 1.35rem;
+  line-height: 1.1;
+  color: var(--solar-bright);
+}
+
+.asteroid-modal.is-contributor .work-metric strong {
+  color: var(--teal-bright);
+}
+
+.work-metric span {
+  font-size: 0.8125rem;
+  color: var(--ink-muted);
+}
+
+.work-launch {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 44px;
+  padding: 0 16px;
+  border-radius: var(--radius-sm);
+  background: rgba(245, 158, 11, 0.16);
+  border: 1px solid var(--line-solar);
+  color: var(--solar-bright);
+  font-size: 0.875rem;
+  font-weight: 600;
+  white-space: nowrap;
+  transition: background-color 0.2s, color 0.2s;
+}
+
+.work-launch:hover {
+  background: var(--solar);
+  color: var(--solar-ink);
+}
+
+.work-launch.is-contributor {
+  background: var(--teal-soft);
+  border-color: var(--line-teal);
+  color: var(--teal-bright);
+}
+
+.work-launch.is-contributor:hover {
+  background: var(--teal);
+  color: #042f2e;
+}
+
+/* Full Asteroid Dossier Modal */
+.lightbox-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  background: rgba(4, 4, 5, 0.86);
+  backdrop-filter: blur(8px);
+  padding: clamp(14px, 3.5vw, 36px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.asteroid-modal {
+  width: min(860px, 100%);
+  max-height: 92dvh;
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--line-solar);
+  background: #100d0e;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 28px 72px rgba(0, 0, 0, 0.8);
+}
+
+.asteroid-modal.is-contributor {
+  border-color: var(--line-teal);
+  background: linear-gradient(180deg, #101a1a 0%, #0d1011 45%);
+}
+
+.asteroid-modal-head {
+  padding: 16px 22px;
+  border-bottom: 1px solid var(--line);
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 14px;
+}
+
+.asteroid-modal-title-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.asteroid-modal-pills {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.asteroid-modal-star {
+  font-size: 0.75rem;
+  color: var(--ink-muted);
+}
+
+.asteroid-modal-head h3 {
+  margin: 0;
+  font-family: var(--display);
+  font-size: clamp(1.2rem, 2.2vw, 1.55rem);
+  color: var(--ink);
+}
+
+.asteroid-modal-scroll {
+  overflow-y: auto;
+  flex: 1;
+}
+
+.asteroid-modal-media {
+  position: relative;
+  aspect-ratio: 16 / 9;
+  background: #070607;
+  border-bottom: 1px solid var(--line);
+  overflow: hidden;
+}
+
+.asteroid-modal-img,
+.asteroid-modal-video {
+  width: 100%;
+  height: 100%;
+  display: block;
+  object-fit: cover;
+  object-position: top center;
+  background: #070607;
+}
+
+.asteroid-modal-video {
+  object-fit: contain;
+}
+
+/* Sample Page Screenshots Grid directly beneath the demo video */
+.asteroid-samples {
+  padding: 18px 22px 6px;
+  border-bottom: 1px solid var(--line);
+  background: rgba(7, 6, 7, 0.36);
+}
+
+.asteroid-samples-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.asteroid-samples-title {
+  font-size: 0.74rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--solar-bright);
+}
+
+.asteroid-samples-count {
+  font-size: 0.72rem;
+  color: var(--ink-muted);
+}
+
+.asteroid-samples-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+  padding-bottom: 14px;
+}
+
+.asteroid-sample-card {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  padding: 0;
+  text-align: left;
+  border-radius: var(--radius-sm);
+  transition: transform 0.22s var(--ease);
+}
+
+.asteroid-sample-card:hover {
+  transform: translateY(-2px);
+}
+
+.asteroid-sample-thumb {
+  position: relative;
+  aspect-ratio: 16 / 9;
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+  border: 1px solid var(--line);
+  background: #080708;
+  transition: border-color 0.22s;
+}
+
+.asteroid-sample-card:hover .asteroid-sample-thumb {
+  border-color: var(--line-solar);
+}
+
+.asteroid-sample-thumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: top center;
+  transition: transform 0.38s var(--ease);
+}
+
+.asteroid-sample-card:hover .asteroid-sample-thumb img {
+  transform: scale(1.03);
+}
+
+.asteroid-sample-zoom {
+  position: absolute;
+  right: 8px;
+  bottom: 8px;
+  width: 28px;
+  height: 28px;
+  border-radius: 6px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(7, 6, 7, 0.84);
+  border: 1px solid rgba(245, 239, 230, 0.24);
+  color: var(--ink);
+  opacity: 0;
+  transition: opacity 0.2s, background-color 0.2s, color 0.2s;
+}
+
+.asteroid-sample-card:hover .asteroid-sample-zoom,
+.asteroid-sample-card:focus-visible .asteroid-sample-zoom {
+  opacity: 1;
+}
+
+.asteroid-sample-card:hover .asteroid-sample-zoom {
+  background: var(--solar);
+  border-color: var(--solar);
+  color: var(--solar-ink);
+}
+
+.asteroid-sample-label {
+  font-size: 0.78rem;
+  font-weight: 500;
+  color: var(--ink-soft);
+  line-height: 1.35;
+}
+
+.asteroid-sample-card:hover .asteroid-sample-label {
+  color: var(--ink);
+}
+
+/* Full-Resolution Sample Page Lightbox */
+.sample-zoom-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 120;
+  background: rgba(4, 4, 5, 0.92);
+  backdrop-filter: blur(10px);
+  padding: clamp(14px, 3.5vw, 36px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.sample-zoom-panel {
+  width: min(1120px, 100%);
+  max-height: 92dvh;
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--line-solar);
+  background: #0d0a0b;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 28px 72px rgba(0, 0, 0, 0.84);
+}
+
+.sample-zoom-head {
+  padding: 12px 18px;
+  border-bottom: 1px solid var(--line);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.sample-zoom-head > div:first-child {
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.sample-zoom-head strong {
+  font-family: var(--display);
+  font-size: 1rem;
+  color: var(--ink);
+}
+
+.sample-zoom-head span {
+  font-size: 0.75rem;
+  color: var(--ink-muted);
+}
+
+.sample-zoom-nav {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.sample-zoom-img {
+  width: 100%;
+  height: auto;
+  max-height: calc(92dvh - 72px);
+  object-fit: contain;
+  background: #070607;
+}
+
+@media (max-width: 640px) {
+  .asteroid-samples-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.asteroid-modal-body {
+  padding: 20px 22px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.asteroid-modal-foot {
+  padding: 16px 22px;
+  border-top: 1px solid var(--line);
+  background: rgba(7, 6, 7, 0.52);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 14px;
+}
+
+.asteroid-modal-actions {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.lightbox-close {
+  width: 44px;
+  height: 44px;
+  flex: 0 0 auto;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--line-strong);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--ink);
+}
+
+.lightbox-close:hover {
+  border-color: var(--line-solar);
+  color: var(--solar-bright);
+}
+
+/* ---------- Act III: Profile, Academic Studio Portrait & Capability Matrix ---------- */
+
+.profile-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1.25fr) minmax(260px, 340px);
+  gap: clamp(28px, 4.5vw, 64px);
+  align-items: center;
+}
+
+.profile-text {
+  margin: 18px 0 0;
+  max-width: 58ch;
+  font-size: 0.975rem;
+  line-height: 1.72;
+  color: var(--ink-soft);
+}
+
+.profile-facts {
+  margin: 26px 0 0;
+  border-top: 1px solid var(--line);
+  display: flex;
+  flex-direction: column;
+}
+
+.profile-facts > div {
+  padding: 14px 0;
+  border-bottom: 1px solid var(--line);
+  display: grid;
+  grid-template-columns: 140px 1fr;
+  gap: 12px;
+  align-items: baseline;
+}
+
+.profile-facts dt {
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: var(--ink-muted);
+}
+
+.profile-facts dd {
+  margin: 0;
+  font-size: 0.9375rem;
+  color: var(--ink);
+}
+
+.profile-portrait-col {
+  width: min(360px, 100%);
+  justify-self: center;
+}
+
+.dossier-photo {
+  margin: 0;
+}
+
+.dossier-stage {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 4 / 5;
+  background: transparent;
+  border: none;
+}
+
+.dossier-stage.has-reveal {
+  cursor: pointer;
+}
+
+.dossier-canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+/* ---------- Act IV: Beasiswa Kukar Idaman Visual Showcase ---------- */
+
+.scholarship-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 0.9fr) minmax(0, 560px);
+  gap: clamp(24px, 4vw, 48px);
+  align-items: center;
+}
+
+.scholarship-head {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 20px;
+}
+
+.scholarship-frame {
+  position: relative;
+  display: block;
+  width: min(560px, 100%);
+  justify-self: end;
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--line-solar);
+  background: var(--bg-card);
+  overflow: hidden;
+  transform: perspective(1000px) rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg));
+  transition: border-color 0.28s, transform 0.32s var(--ease);
+}
+
+.scholarship-frame::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  pointer-events: none;
+  opacity: 0;
+  background: radial-gradient(
+    360px circle at var(--mx, 50%) var(--my, 50%),
+    rgba(254, 240, 199, 0.12),
+    transparent 62%
+  );
+  transition: opacity 0.3s;
+}
+
+.scholarship-frame[data-spot="true"]::before {
+  opacity: 1;
+}
+
+.scholarship-glint {
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  width: 46%;
+  pointer-events: none;
+  background: linear-gradient(
+    108deg,
+    transparent 0%,
+    rgba(254, 240, 199, 0.08) 40%,
+    rgba(254, 240, 199, 0.26) 50%,
+    transparent 64%
+  );
+  transform: translateX(-140%);
+}
+
+.scholarship-frame:hover {
+  border-color: var(--solar);
+  transform: perspective(1000px) rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg)) translateY(-2px);
+}
+
+.scholarship-img {
+  width: 100%;
+  height: auto;
+  display: block;
+  transition: transform 0.55s var(--ease);
+}
+
+.scholarship-frame:hover .scholarship-img {
+  transform: scale(1.015);
+}
+
+.scholarship-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 11px 16px;
+  border-top: 1px solid var(--line);
+  background: var(--bg-elevated);
+  font-size: 0.78rem;
+  color: var(--solar-bright);
+  word-break: break-all;
+}
+
+/* ---------- Act V: Solar Eclipse Horizon Contact Finale ---------- */
+
+.eclipse-footer {
+  position: relative;
+  margin-top: clamp(86px, 10vw, 140px);
+  padding: calc(var(--nav-h) + 18px) var(--gut) 48px;
+  border-top: 1px solid var(--line);
+  overflow: hidden;
+}
+
+.eclipse-horizon {
+  position: absolute;
+  top: -180px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: min(1160px, 134vw);
+  height: 340px;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.eclipse-horizon.has-flow-clip {
+  top: 0;
+  left: 0;
+  transform: none;
+  width: 100%;
+  height: 100%;
+  opacity: 0.52;
+  mask-image: linear-gradient(180deg, transparent 0%, black 22%, black 85%, transparent 100%);
+}
+
+.eclipse-horizon-canvas {
+  width: 100%;
+  height: 100%;
+}
+
+.eclipse-horizon-ring {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  background: radial-gradient(
+    ellipse at 50% 62%,
+    rgba(7, 6, 7, 1) 0 48%,
+    rgba(254, 240, 199, 0.52) 50%,
+    rgba(245, 158, 11, 0.24) 55%,
+    rgba(234, 88, 12, 0.08) 68%,
+    transparent 78%
+  );
+}
+
+.footer-wrap {
+  position: relative;
+  z-index: 2;
+  width: min(var(--max-w), 100%);
+  margin: 0 auto;
+}
+
+.finale-top {
+  max-width: 1080px;
+}
+
+.finale-h2 {
+  margin: 0;
+  font-family: var(--display);
+  font-size: clamp(1.85rem, 3.8vw, 2.85rem);
+  line-height: 1.1;
+  letter-spacing: -0.025em;
+  color: var(--ink);
+  text-wrap: balance;
+}
+
+.finale-note {
+  margin: 14px 0 28px;
+  max-width: 62ch;
+  font-size: 0.975rem;
+  color: var(--ink-soft);
+}
+
+/* 3 Balanced Direct Outreach Tiles (WhatsApp, LinkedIn & GitHub) */
+.channel-tiles {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+}
+
+.channel-tile {
+  position: relative;
+  overflow: hidden;
+  padding: 22px 24px;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--line-strong);
+  background: var(--bg-card);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  transition: transform 0.28s var(--ease), border-color 0.25s, background-color 0.25s;
+}
+
+.channel-tile::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0;
+  background: radial-gradient(
+    280px circle at var(--mx, 50%) var(--my, 50%),
+    rgba(245, 158, 11, 0.14),
+    transparent 64%
+  );
+  transition: opacity 0.28s;
+}
+
+.channel-tile-wa::before {
+  background: radial-gradient(
+    280px circle at var(--mx, 50%) var(--my, 50%),
+    rgba(45, 212, 191, 0.16),
+    transparent 64%
+  );
+}
+
+.channel-tile[data-spot="true"]::before {
+  opacity: 1;
+}
+
+.channel-tile:hover {
+  transform: translateY(-3px);
+  border-color: var(--line-solar);
+  background: #1c1512;
+}
+
+.channel-tile-wa:hover {
+  border-color: var(--line-teal);
+}
+
+.channel-arrow {
+  transition: transform 0.28s var(--ease);
+}
+
+.channel-tile:hover .channel-arrow {
+  transform: translate(3px, -3px);
+}
+
+.channel-tile-solar {
+  border-color: var(--line-solar);
+  background: #1d140d;
+}
+
+.channel-tile-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  color: var(--solar-bright);
+  margin-bottom: 4px;
+}
+
+.channel-tile strong {
+  font-family: var(--display);
+  font-size: 1.25rem;
+  color: var(--ink);
+}
+
+.channel-tile p {
+  margin: 0;
+  font-size: 0.9rem;
+  color: var(--ink-soft);
+}
+
+.channel-handle {
+  margin-top: 4px;
+  font-size: 0.8125rem;
+  color: var(--solar-bright);
+  word-break: break-all;
+}
+
+.footer-brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  font-family: var(--display);
+  font-size: 0.875rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  color: var(--ink);
+}
+
+.footer-legal {
+  margin-top: 48px;
+  padding-top: 22px;
+  border-top: 1px solid var(--line);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+  font-size: 0.8125rem;
+  color: var(--ink-dim);
+}
+
+/* ---------- Responsive Breakpoints ---------- */
+
+@media (max-width: 1060px) {
+  .obs-hero-sticky {
+    align-items: flex-start;
+    padding-top: calc(var(--nav-h) + 12px);
+  }
+
+  .obs-hero-runway {
+    height: 540vh;
+  }
+
+  .works-sec {
+    margin-top: -72vh;
+  }
+
+  .profile-layout,
+  .scholarship-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .scholarship-frame {
+    justify-self: start;
+  }
+
+  .channel-tiles {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 859px) {
+  .obs-flow-layer {
+    mask-image: linear-gradient(180deg, transparent 0%, black 16%, black 84%, transparent 100%);
+    -webkit-mask-image: linear-gradient(180deg, transparent 0%, black 16%, black 84%, transparent 100%);
+  }
+
+  .obs-hero-runway {
+    height: 460vh;
+  }
+
+  .works-sec {
+    margin-top: -16vh;
+    padding-top: 32px;
+  }
+
+  .obs-pillars {
+    margin-top: 16px;
+    gap: 6px;
+  }
+
+  .obs-pillars li {
+    padding: 5px 10px;
+    font-size: 0.75rem;
+  }
+
+  .obs-actions {
+    margin-top: 18px;
+    gap: 10px;
+  }
+
+  .obs-actions .btn-solar,
+  .obs-actions .btn-outline {
+    min-height: 42px;
+    padding: 10px 16px;
+    font-size: 0.875rem;
+  }
+}
+
+@media (max-width: 720px) {
+  .channel-tiles {
+    grid-template-columns: 1fr;
+  }
+
+  .orb-monument-foot {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 4px;
+    bottom: 14px;
+  }
+
+  .orb-coord-whisper {
+    margin-left: 0;
+    font-size: 0.68rem;
+  }
+
+  .orb-drag-whisper {
+    font-size: 0.66rem;
+  }
+
+  .orb-star-callout {
+    padding: 3px 7px;
+  }
+
+  .orb-star-callout strong {
+    font-size: 0.7rem;
+  }
+
+  /* Keep Data Contributor badge visible on compact screens while keeping non-contributor plates compact */
+  .orb-star-node:not(.is-contributor) .orb-star-callout em {
+    display: none;
+  }
+
+  .orb-star-popover {
+    bottom: 46px;
+    padding: 14px 15px;
+  }
+
+  .profile-portrait-col {
+    width: min(300px, 84vw);
+  }
+
+  .profile-facts > div {
+    grid-template-columns: 1fr;
+    gap: 4px;
+  }
+
+  .scholarship-frame {
+    width: 100%;
+  }
+
+  .scholarship-bar {
+    font-size: 0.72rem;
+    padding: 10px 12px;
+  }
+
+  .scholarship-bar span {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .asteroid-modal {
+    max-height: 90dvh;
+  }
+
+  .asteroid-modal-head,
+  .asteroid-modal-body,
+  .asteroid-modal-foot,
+  .asteroid-samples {
+    padding-left: 16px;
+    padding-right: 16px;
+  }
+
+  .asteroid-modal-scroll {
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .asteroid-modal-foot {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .asteroid-modal-actions .work-launch {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .sample-zoom-head {
+    padding: 10px 14px;
+  }
+
+  .sample-zoom-head strong {
+    font-size: 0.9rem;
+  }
+
+  .footer-legal {
+    margin-top: 34px;
+    font-size: 0.75rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .obs-h1 {
+    font-size: clamp(1.95rem, 9.2vw, 2.55rem);
+  }
+
+  .ed-filter-bar {
+    gap: 6px;
+  }
+
+  .ed-filter-btn {
+    min-height: 40px;
+    padding: 0 12px;
+    font-size: 0.8125rem;
+  }
+
+  .asteroid-rock {
+    padding: 28px 30px 28px;
+    gap: 10px;
+  }
+
+  .asteroid-media {
+    width: calc(100% - 20px);
+  }
+
+  .asteroid-info h3 {
+    font-size: 1.06rem;
+  }
+
+  .asteroid-foot {
+    padding: 9px 14px 0;
+  }
+
+  .channel-tile {
+    padding: 18px 18px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+  }
+
+  .nusa-packet,
+  .nusa-radar-ping {
+    display: none;
+  }
+}
