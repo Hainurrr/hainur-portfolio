@@ -1,7 +1,7 @@
 import anime from "animejs";
 import { useEffect, useRef } from "react";
 import { PortraitFrame } from "../components/ui/PortraitFrame";
-import { PROFILE, t, UI_COPY, type Locale } from "../data/portfolio";
+import { PROFILE, SKILL_ROLES, t, UI_COPY, type Locale } from "../data/portfolio";
 import { useReducedMotion } from "../hooks/useReducedMotion";
 import {
   bindScrollScrub,
@@ -136,6 +136,16 @@ export function ProfileDiptych({ lang }: ProfileDiptychProps) {
             <div>
               <dt>{lang === "id" ? "Asal & Domisili" : "Location"}</dt>
               <dd>{PROFILE.location}</dd>
+            </div>
+            <div>
+              <dt>{lang === "id" ? "Skill & Peran" : "Skills & Roles"}</dt>
+              <dd>
+                <ul className="profile-skill-list">
+                  {SKILL_ROLES.map((skill) => (
+                    <li key={skill.en}>{t(skill, lang)}</li>
+                  ))}
+                </ul>
+              </dd>
             </div>
           </dl>
         </div>

@@ -36,12 +36,13 @@ export const FLOW_METEOR_ANCHORS: readonly { x: number; y: number }[] = [
 export function computeFlowVideoRect(vw: number, vh: number, vidW = 1280, vidH = 720) {
   const isCompact = vw < 900;
   if (isCompact && vh > vw) {
-    // Portrait phone/tablet: frame planet boldly in the lower canvas below the top-aligned Hero title & CTAs
-    const scale = Math.min((vw * 1.24) / vidW, (vh * 0.62) / vidH);
+    // Portrait phone/tablet: keep right edge flush (zero video cutoff seam) while bringing planet
+    // generously into the lower viewport below the top Hero copy & CTAs
+    const scale = Math.min((vw * 1.28) / vidW, (vh * 0.54) / vidH);
     const dw = vidW * scale;
     const dh = vidH * scale;
-    const dx = (vw - dw) * 0.5;
-    const dy = vh * 0.67 - FLOW_PLANET_ANCHOR.cy * dh;
+    const dx = vw - dw;
+    const dy = vh * 0.7 - FLOW_PLANET_ANCHOR.cy * dh;
     return { dx, dy, dw, dh, scale, isCompact };
   }
   const scale = isCompact ? Math.min(vw / vidW, vh / vidH) : Math.max(vw / vidW, vh / vidH);

@@ -17,6 +17,8 @@
   --line: rgba(245, 239, 230, 0.14);
   --line-strong: rgba(245, 239, 230, 0.28);
   --line-solar: rgba(245, 158, 11, 0.42);
+  --line-crimson: rgba(166, 38, 38, 0.56);
+  --line-gold: rgba(242, 232, 87, 0.48);
   --line-teal: rgba(45, 212, 191, 0.44);
 
   /* Molten Solar Eclipse Accents */
@@ -24,6 +26,14 @@
   --solar-bright: #fef0c7;
   --solar-flare: #ea580c;
   --solar-ink: #1a0d03;
+
+  /* Volcanic Crimson & Solar Gold Accents */
+  --crimson: #a62626;
+  --crimson-bright: #e05252;
+  --crimson-soft: rgba(166, 38, 38, 0.22);
+  --crimson-glow: rgba(166, 38, 38, 0.42);
+  --gold: #f2e857;
+  --gold-soft: rgba(242, 232, 87, 0.14);
 
   /* Secondary Contrast for Data Contributor & Open Data */
   --teal: #2dd4bf;
@@ -70,7 +80,7 @@ body {
   font-family: var(--body);
   font-size: 1rem;
   line-height: 1.62;
-  caret-color: var(--solar);
+  caret-color: var(--gold);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
@@ -117,12 +127,12 @@ img {
 }
 
 ::selection {
-  background: rgba(245, 158, 11, 0.34);
-  color: var(--ink);
+  background: rgba(166, 38, 38, 0.48);
+  color: var(--gold);
 }
 
 :focus-visible {
-  outline: 2px solid var(--solar);
+  outline: 2px solid var(--gold);
   outline-offset: 3px;
 }
 

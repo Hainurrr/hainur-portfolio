@@ -81,9 +81,9 @@ export function BrandMark({ size = 30, animateOnMount = false }: BrandMarkProps)
     >
       <defs>
         <linearGradient id={gradId} x1="0%" y1="0%" x2="100%" y2="100%">
-          <stop offset="0%" stopColor="#fef0c7" />
-          <stop offset="50%" stopColor="#f59e0b" />
-          <stop offset="100%" stopColor="#ea580c" />
+          <stop offset="0%" stopColor="#f2e857" />
+          <stop offset="52%" stopColor="#f59e0b" />
+          <stop offset="100%" stopColor="#a62626" />
         </linearGradient>
       </defs>
       {/* Outer partial solar eclipse crescent */}
@@ -110,7 +110,7 @@ export function BrandMark({ size = 30, animateOnMount = false }: BrandMarkProps)
         cx="49"
         cy="44"
         r="3.4"
-        fill="#f59e0b"
+        fill="#f2e857"
         style={{ transformOrigin: "49px 44px" }}
       />
     </svg>

@@ -33,6 +33,15 @@ export function AsteroidDossierModal({
   const modalMetricRef = useRef<HTMLElement>(null);
   const [zoomSampleIdx, setZoomSampleIdx] = useState<number | null>(null);
 
+  // Lock background page scrolling on mobile & desktop while dossier modal is open
+  useEffect(() => {
+    const prevOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.body.style.overflow = prevOverflow;
+    };
+  }, []);
+
   useEffect(() => {
     setZoomSampleIdx(null);
     modalCloseRef.current?.focus();

@@ -20,8 +20,8 @@ export function App() {
     document.documentElement.lang = lang;
     document.title =
       lang === "id"
-        ? "Hainur Fadillah | Web Development, Data & BI, Sistem Informasi"
-        : "Hainur Fadillah | Web Development, Data & BI, Information Systems";
+        ? "Hainur Fadillah | Frontend, Web Dev, Data Analytics, Cloud & AI, Design & Prototyping"
+        : "Hainur Fadillah | Frontend, Web Dev, Data Analytics, Cloud & AI, Design & Prototyping";
   }, [lang]);
 
   const scrollToElement = useCallback(

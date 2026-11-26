@@ -4,7 +4,7 @@ import { useEffect, useLayoutEffect, useRef } from "react";
 import { EclipseGlobe } from "../components/canvas/EclipseGlobe";
 import { ScrollSequenceCanvas } from "../components/canvas/ScrollSequenceCanvas";
 import { computeFlowVideoRect, FLOW_MANIFEST } from "../data/flowManifest";
-import { PROFILE, PROJECTS, t, UI_COPY, type Locale } from "../data/portfolio";
+import { PROFILE, PROJECTS, SKILL_ROLES, t, UI_COPY, type Locale } from "../data/portfolio";
 import { useReducedMotion } from "../hooks/useReducedMotion";
 import { attachMagnetic, clearAnimated, EASE_OUT_EXPO } from "../lib/motion";
 
@@ -44,6 +44,7 @@ export function HeroSection({ lang, activeProjectId, onSelectNode }: HeroSection
 
   const arriveProgressRef = useRef(0);
   const shatterProgressRef = useRef(0);
+  const globeInteractiveRef = useRef(false);
   const reducedMotion = useReducedMotion();
 
   const hasFlowVideos =
@@ -77,10 +78,11 @@ export function HeroSection({ lang, activeProjectId, onSelectNode }: HeroSection
   }, [reducedMotion]);
 
   // Continuous 3-Phase Hybrid Cinema -> Interactive -> Meteor Handoff directly into real `#projects`:
-  //   0.00 -> 0.27: Name-only opening glides left; Google Flow `eclipse-arrive` brings the giant planet in
-  //   0.27 -> 0.51: Seamless pixel-locked handoff to interactive 3D Cassiopeia Planet (drag 360° & click stars)
-  //   0.51 -> 1.00: Seamless handoff to Google Flow `eclipse-shatter` (molten cracks -> supernova -> 5 blazing meteors dissolving right into the real `#projects` cards!)
-  useEffect(() => {
+  //   0.00 -> 0.23: Name-only opening glides left; Google Flow `eclipse-arrive` brings the giant planet in
+  //   0.23 -> 0.60: Seamless pixel-locked handoff to interactive 3D Cassiopeia Planet (drag 360° & click stars)
+  //   0.55 -> 1.00: Seamless handoff to Google Flow `eclipse-shatter` (molten cracks -> supernova -> 5 blazing meteors)
+  // Runs in useLayoutEffect so centering and initial opacity=0 apply BEFORE the browser's first paint (zero flash).
+  useLayoutEffect(() => {
     const runway = runwayRef.current;
     const sticky = stickyRef.current;
     if (!runway || !sticky || reducedMotion) return;
@@ -108,52 +110,67 @@ export function HeroSection({ lang, activeProjectId, onSelectNode }: HeroSection
       const p = smoothP;
       const vr = computeFlowVideoRect(vw, vh, 1280, 720);
 
-      // Feed raw target track into ScrollSequenceCanvas (which applies the exact same 0.12 smooth damping in lockstep)
-      arriveProgressRef.current = clamp01(targetP / 0.27);
-      // Pure meteor explosion sequence (64 frames: molten cracks -> blast -> 5 blazing meteors, zero wireframe boxes)
-      shatterProgressRef.current = clamp01((targetP - 0.51) / 0.34);
+      // Feed raw target track into ScrollSequenceCanvas (same 0.12 smooth damping in lockstep)
+      // Rebalanced timing gives a generous scroll dwell pause on the interactive 3D planet (0.22 -> 0.60)
+      arriveProgressRef.current = clamp01(targetP / 0.23);
+      shatterProgressRef.current = clamp01((targetP - 0.58) / 0.29);
 
-      // Overlapping crossfade curves with zero dark flash
-      const globeIn = easeOutCubic((p - 0.23) / 0.06);
-      const globeOut = 1 - easeOutCubic((p - 0.5) / 0.06);
+      // Overlapping silk-smooth crossfade curves with generous interactive globe dwell
+      const globeIn = easeOutCubic((p - 0.19) / 0.07);
+      const globeOut = 1 - easeOutCubic((p - 0.56) / 0.1);
       const globeAlpha = globeIn * globeOut;
+      globeInteractiveRef.current = globeAlpha > 0.72;
 
-      const arriveAlpha = 1 - easeOutCubic((p - 0.26) / 0.05);
-      // Shatter fades in over 0.49 -> 0.55, peaks with blazing meteors around 0.83..0.86, then zooms & dissolves smoothly behind rising cards (0.83 -> 0.99)
-      const shatterIn = easeOutCubic((p - 0.49) / 0.06);
-      const shatterOut = 1 - easeOutCubic((p - 0.83) / 0.16);
+      const arriveAlpha = 1 - easeOutCubic((p - 0.21) / 0.06);
+      // Shatter crossfades gently over 0.55 -> 0.65 so cracks ignite smoothly after the interactive dwell,
+      // peaks with blazing meteors around 0.85..0.88, then zooms & dissolves into rising cards (0.85 -> 0.99)
+      const shatterIn = easeOutCubic((p - 0.55) / 0.1);
+      const shatterOut = 1 - easeOutCubic((p - 0.85) / 0.14);
       const shatterVideoAlpha = shatterIn * shatterOut;
-      const shatterZoom = 1 + clamp01((p - 0.8) / 0.2) * 0.16;
+      const shatterZoom = 1 + clamp01((p - 0.81) / 0.19) * 0.18;
 
-      // Subtle warm solar-ember atmospheric bridge peaking right as the meteors morph into real cards
-      const bloomRise = easeOutCubic((p - 0.75) / 0.1);
-      const bloomFall = 1 - easeOutCubic((p - 0.85) / 0.14);
-      const bloomAlpha = bloomRise * bloomFall * 0.78;
+      // Dual-peak warm solar-ember veil: soft ignition pulse across globe->shatter handoff + meteor burst bridge
+      const ignitePulse =
+        easeOutCubic((p - 0.54) / 0.06) * (1 - easeOutCubic((p - 0.61) / 0.08)) * 0.36;
+      const bloomRise = easeOutCubic((p - 0.78) / 0.09);
+      const bloomFall = 1 - easeOutCubic((p - 0.87) / 0.12);
+      const bloomAlpha = Math.min(0.86, ignitePulse + bloomRise * bloomFall * 0.78);
 
-      // 1. Copy column: mathematically centered Name-Only at p=0 (using actual H1 width so mobile centers dead-on), glides flush-left as planet arrives
+      // 1. Copy column: centered Name-Only at p=0 without ever pushing mobile skill pills off-screen
       if (copyColRef.current) {
-        const revealT = easeOutCubic(p / 0.26);
+        const revealT = easeOutCubic(p / 0.23);
         const parentLeft = copyColRef.current.parentElement?.offsetLeft ?? 0;
-        const naturalW =
-          (vr.isCompact ? headingRef.current?.offsetWidth : copyColRef.current.offsetWidth) || 320;
-        const centerShiftX = vw * 0.5 - (parentLeft + naturalW * 0.5);
-        const startScale = vr.isCompact ? 1.0 : 1.14;
-        const currX = centerShiftX * (1 - revealT);
-        const currY = vr.isCompact ? (1 - revealT) * (vh * 0.25) : 0;
-        const currScale = startScale - (startScale - 1) * revealT;
-        const exitAlpha = 1 - clamp01((p - 0.5) / 0.11);
-        const exitShiftY = -clamp01((p - 0.5) / 0.13) * 28;
+        const exitAlpha = 1 - clamp01((p - 0.58) / 0.1);
+        const exitShiftY = -clamp01((p - 0.58) / 0.12) * 28;
 
-        copyColRef.current.style.transform = `translate3d(${currX.toFixed(1)}px, ${(currY + exitShiftY).toFixed(1)}px, 0) scale(${currScale.toFixed(4)})`;
+        if (vr.isCompact) {
+          const h1W = headingRef.current?.offsetWidth || 240;
+          const h1CenterX = Math.max(0, vw * 0.5 - (parentLeft + h1W * 0.5));
+          const currY = (1 - revealT) * (vh * 0.22);
+          copyColRef.current.style.transform = `translate3d(0px, ${(currY + exitShiftY).toFixed(1)}px, 0)`;
+          if (headingRef.current) {
+            headingRef.current.style.transform = `translate3d(${(h1CenterX * (1 - revealT)).toFixed(1)}px, 0, 0)`;
+          }
+        } else {
+          const naturalW = copyColRef.current.offsetWidth || 320;
+          const centerShiftX = vw * 0.5 - (parentLeft + naturalW * 0.5);
+          const currX = centerShiftX * (1 - revealT);
+          const currScale = 1.14 - 0.14 * revealT;
+          copyColRef.current.style.transform = `translate3d(${currX.toFixed(1)}px, ${exitShiftY.toFixed(1)}px, 0) scale(${currScale.toFixed(4)})`;
+          if (headingRef.current) {
+            headingRef.current.style.transform = "";
+          }
+        }
+
         copyColRef.current.style.opacity = exitAlpha.toFixed(3);
         copyColRef.current.style.pointerEvents = exitAlpha > 0.25 ? "auto" : "none";
       }
 
       if (metaGroupRef.current) {
-        const metaT = easeOutCubic((p - 0.09) / 0.17);
+        const metaT = easeOutCubic((p - 0.08) / 0.15);
         metaGroupRef.current.style.opacity = metaT.toFixed(3);
         metaGroupRef.current.style.transform = `translateY(${((1 - metaT) * 18).toFixed(1)}px)`;
-        metaGroupRef.current.style.pointerEvents = metaT > 0.35 && p < 0.54 ? "auto" : "none";
+        metaGroupRef.current.style.pointerEvents = metaT > 0.35 && p < 0.62 ? "auto" : "none";
       }
 
       // 2. Layer opacities & interactive pointer handoff
@@ -196,6 +213,17 @@ export function HeroSection({ lang, activeProjectId, onSelectNode }: HeroSection
       cancelAnimationFrame(raf);
       window.removeEventListener("scroll", schedule);
       window.removeEventListener("resize", schedule);
+      if (headingRef.current) headingRef.current.style.transform = "";
+      if (copyColRef.current) {
+        copyColRef.current.style.transform = "";
+        copyColRef.current.style.opacity = "";
+        copyColRef.current.style.pointerEvents = "";
+      }
+      if (metaGroupRef.current) {
+        metaGroupRef.current.style.transform = "";
+        metaGroupRef.current.style.opacity = "";
+        metaGroupRef.current.style.pointerEvents = "";
+      }
     };
   }, [reducedMotion]);
 
@@ -235,6 +263,7 @@ export function HeroSection({ lang, activeProjectId, onSelectNode }: HeroSection
             activeNodeId={activeProjectId}
             lang={lang}
             matchFlowPlanet={hasFlowVideos && !reducedMotion}
+            interactiveActiveRef={globeInteractiveRef}
             onSelectNode={onSelectNode}
           />
         </div>
@@ -266,10 +295,10 @@ export function HeroSection({ lang, activeProjectId, onSelectNode }: HeroSection
             </h1>
 
             <div ref={metaGroupRef} className="obs-hero-meta">
-              <ul className="obs-pillars" aria-label={lang === "id" ? "Bidang fokus utama" : "Core focus areas"}>
-                <li>Web Development</li>
-                <li>Data &amp; Business Intelligence</li>
-                <li>{lang === "id" ? "Sistem Informasi" : "Information Systems"}</li>
+              <ul className="obs-pillars" aria-label={lang === "id" ? "Skill dan peran utama" : "Core skills and roles"}>
+                {SKILL_ROLES.map((skill) => (
+                  <li key={skill.en}>{t(skill, lang)}</li>
+                ))}
               </ul>
 
               <div className="obs-actions">

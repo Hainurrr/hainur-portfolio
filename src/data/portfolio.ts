@@ -16,7 +16,16 @@ export type Locale = "id" | "en";
 
 export type LocalizedText = { id: string; en: string };
 
-export type DomainCategory = "Web Dev" | "Data & BI" | "Info Systems";
+export type DomainCategory = "Web Dev" | "Data Analytics" | "Info Systems";
+
+export const SKILL_ROLES: readonly LocalizedText[] = [
+  { id: "Web Development", en: "Web Development" },
+  { id: "Frontend", en: "Frontend" },
+  { id: "Data Analytics", en: "Data Analytics" },
+  { id: "Cloud & AI", en: "Cloud & AI" },
+  { id: "Design & Prototyping", en: "Design & Prototyping" },
+  { id: "Sistem Informasi", en: "Information Systems" },
+];
 
 export type ProjectSamplePage = {
   src: string;
@@ -111,8 +120,8 @@ export const UI_COPY = {
     en: "Drag to rotate · click any star for details",
   },
   globeHintTouch: {
-    id: "Geser untuk memutar · ketuk bintang",
-    en: "Swipe to rotate · tap a star",
+    id: "Geser planet untuk memutar · geser luar planet untuk scroll",
+    en: "Drag planet to spin · swipe outside to scroll",
   },
   globeDetails: { id: "Lihat Detail", en: "View Details" },
   globeLaunch: { id: "Buka Live", en: "Open Live" },
@@ -123,7 +132,7 @@ export const UI_COPY = {
   },
   filterAll: { id: "Semua (5)", en: "All (5)" },
   filterWeb: { id: "Web Dev", en: "Web Dev" },
-  filterBI: { id: "Data & BI", en: "Data & BI" },
+  filterAnalytics: { id: "Data Analytics", en: "Data Analytics" },
   filterIS: { id: "Sistem Informasi", en: "Info Systems" },
   cardLaunchBuilt: { id: "Buka Aplikasi", en: "Launch App" },
   cardLaunchPlatform: { id: "Kunjungi Situs", en: "Visit Site" },
@@ -133,11 +142,11 @@ export const UI_COPY = {
     en: "About Me",
   },
   profileBio: {
-    id: "Mahasiswa S1 Sistem Informasi Telkom University yang fokus membangun aplikasi web operasional, dashboard Data & BI, serta menyalurkan laporan lapangan warga Kalimantan Timur untuk keterbukaan data lingkungan.",
-    en: "Telkom University Information Systems student building practical web apps, Data & BI dashboards, and channeling local East Kalimantan field reports into open environmental data.",
+    id: "Mahasiswa S1 Sistem Informasi Telkom University yang fokus pada Web Development, Frontend, Data Analytics, Cloud & AI, serta Design & Prototyping, sekaligus menyalurkan laporan lapangan warga Kalimantan Timur untuk keterbukaan data lingkungan.",
+    en: "Telkom University Information Systems student focusing on Web Development, Frontend, Data Analytics, Cloud & AI, and Design & Prototyping, while bridging East Kalimantan field reports into open environmental data.",
   },
   scholarshipTitle: { id: "Penerima Beasiswa Kukar Idaman", en: "Beasiswa Kukar Idaman Awardee" },
-  scholarshipCta: { id: "Buka Halaman Resmi", en: "Visit Official Page" },
+  scholarshipCta: { id: "Buka Halaman", en: "Open Page" },
   contactHeading: {
     id: "Terbuka untuk kolaborasi & peluang baru.",
     en: "Open for collaborations & opportunities.",
@@ -158,7 +167,7 @@ export const PROJECTS: ProjectRecord[] = [
     shortName: "TelyuCan",
     url: "https://telyucan.app/",
     categories: ["Web Dev", "Info Systems"],
-    role: { id: "Web Developer & Systems Builder", en: "Web Developer & Systems Builder" },
+    role: { id: "Full-Stack Web Dev & Project Manager", en: "Full-Stack Web Dev & Project Manager" },
     teamCredit: {
       id: "Kelompok 5 · S1 SI Telkom University (Web Application Development)",
       en: "Kelompok 5 · Telkom University IS (Web Application Development)",
@@ -257,7 +266,7 @@ export const PROJECTS: ProjectRecord[] = [
     shortName: "Telyuji",
     url: "https://telyuji-02704c185fa1.herokuapp.com/",
     categories: ["Info Systems", "Web Dev"],
-    role: { id: "Project Manager & Developer", en: "Project Manager & Developer" },
+    role: { id: "Full-Stack Web Dev & Project Manager", en: "Full-Stack Web Dev & Project Manager" },
     shortTag: { id: "Pengujian Lab", en: "Lab Testing IS" },
     screenshot: {
       src: telyujiLandingSample,
@@ -351,8 +360,8 @@ export const PROJECTS: ProjectRecord[] = [
     name: "Credit Card Fraud Monitoring Dashboard",
     shortName: "Fraud Dashboard",
     url: "https://public.tableau.com/app/profile/hainur.fadillah/viz/CreditCardFraudDashboard_Hainur/CreditCardFraudDashboard?publish=yes",
-    categories: ["Data & BI"],
-    role: { id: "BI Analyst & Author", en: "BI Analyst & Author" },
+    categories: ["Data Analytics"],
+    role: { id: "Data Analyst & Author", en: "Data Analyst & Author" },
     shortTag: { id: "Tableau BI", en: "Tableau BI" },
     screenshot: {
       src: fraudImg,
@@ -399,14 +408,10 @@ export const PROJECTS: ProjectRecord[] = [
     name: "POKÉDATA // TERMINAL",
     shortName: "PokéData ML",
     url: "https://pokemonkelompok10.streamlit.app/",
-    categories: ["Data & BI"],
+    categories: ["Data Analytics"],
     role: {
-      id: "Tim Kelompok 10 · Data & ML",
-      en: "Kelompok 10 Team · Data & ML",
-    },
-    teamCredit: {
-      id: "Kelompok 10 · S1 SI Telkom University (Fauzi, Hainur, Dhimas, Fiqih)",
-      en: "Kelompok 10 · Telkom University IS (Fauzi, Hainur, Dhimas, Fiqih)",
+      id: "Full-Stack Web Dev & Project Manager",
+      en: "Full-Stack Web Dev & Project Manager",
     },
     shortTag: { id: "Streamlit ML", en: "Streamlit ML" },
     screenshot: {
@@ -414,8 +419,8 @@ export const PROJECTS: ProjectRecord[] = [
       width: 1440,
       height: 630,
       alt: {
-        id: "Tangkapan layar POKÉDATA // TERMINAL di Streamlit oleh Kelompok 10",
-        en: "Screenshot of POKÉDATA // TERMINAL on Streamlit by Kelompok 10",
+        id: "Tangkapan layar POKÉDATA // TERMINAL di Streamlit",
+        en: "Screenshot of POKÉDATA // TERMINAL on Streamlit",
       },
     },
     metricValue: 48048,
@@ -434,8 +439,8 @@ export const PROJECTS: ProjectRecord[] = [
       en: "Streamlit app for Pokémon stat clustering and battle outcome prediction.",
     },
     impactLine: {
-      id: "Klasterisasi & prediksi 48.048 laga Pokémon dengan 3 algoritma ML (Kelompok 10).",
-      en: "Clustering & prediction across 48,048 Pokémon battles with 3 ML models (Kelompok 10).",
+      id: "Klasterisasi & prediksi 48.048 laga Pokémon dengan 3 algoritma ML.",
+      en: "Clustering & prediction across 48,048 Pokémon battles with 3 ML models.",
     },
     highlights: {
       id: [
@@ -454,7 +459,7 @@ export const PROJECTS: ProjectRecord[] = [
     name: "Nusantara Atlas",
     shortName: "Nusantara Atlas",
     url: "https://nusantara-atlas.org/",
-    categories: ["Data & BI", "Info Systems"],
+    categories: ["Data Analytics", "Info Systems"],
     role: { id: "Role: Data Contributor", en: "Role: Data Contributor" },
     isContributor: true,
     contributorNote: {

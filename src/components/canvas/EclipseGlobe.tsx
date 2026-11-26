@@ -1,10 +1,17 @@
-import { ArrowDownRight, ArrowUpRight, ArrowsOutCardinal, X } from "@phosphor-icons/react";
+import { ArrowDownRight, ArrowUpRight, X } from "@phosphor-icons/react";
 import anime from "animejs";
-import { useEffect, useRef, useState, type KeyboardEvent as ReactKeyboardEvent } from "react";
+import {
+  useEffect,
+  useRef,
+  useState,
+  type KeyboardEvent as ReactKeyboardEvent,
+  type MutableRefObject,
+} from "react";
 import { computeFlowVideoRect, FLOW_PLANET_ANCHOR } from "../../data/flowManifest";
 import { t, UI_COPY, type Locale, type ProjectRecord } from "../../data/portfolio";
-import { useMedia, useReducedMotion } from "../../hooks/useReducedMotion";
+import { useReducedMotion } from "../../hooks/useReducedMotion";
 import { EASE_OUT_EXPO } from "../../lib/motion";
+import { addSkyDrift } from "../../lib/skyMotion";
 import {
   CASSIOPEIA_EDGES,
   CASSIOPEIA_TITLE_VEC,
@@ -67,6 +74,8 @@ type EclipseGlobeProps = {
   lang: Locale;
   /** Align 3D WebGL planet geometry to the calibrated Google Flow hero frame */
   matchFlowPlanet?: boolean;
+  /** Live ref toggled true when the hero scroll enters the interactive planet dwell zone */
+  interactiveActiveRef?: MutableRefObject<boolean>;
   onSelectNode: (id: string, jumpToArchive?: boolean) => void;
 };
 
@@ -106,12 +115,13 @@ function resolveCalloutCollisions(
   stars: ProjectedPoint[],
   stageW: number,
   stageH: number,
+  minTop = 84,
+  minBottom = 48,
 ): void {
-  const minTop = 84;
-  const edgePad = 14;
+  const edgePad = stageW < 480 ? 10 : 14;
   const clampInside = (box: CalloutBox) => {
     box.boxX = Math.max(box.width * 0.5 + edgePad, Math.min(stageW - box.width * 0.5 - edgePad, box.boxX));
-    box.boxY = Math.max(box.height * 0.5 + minTop, Math.min(stageH - box.height * 0.5 - 48, box.boxY));
+    box.boxY = Math.max(box.height * 0.5 + minTop, Math.min(stageH - box.height * 0.5 - minBottom, box.boxY));
   };
 
   for (let pass = 0; pass < 5; pass++) {
@@ -167,9 +177,11 @@ export function EclipseGlobe({
   activeNodeId,
   lang,
   matchFlowPlanet = false,
+  interactiveActiveRef,
   onSelectNode,
 }: EclipseGlobeProps) {
   const containerRef = useRef<HTMLDivElement>(null);
+  const sphereHitRef = useRef<HTMLDivElement>(null);
   const webglCanvasRef = useRef<HTMLCanvasElement>(null);
   const chartCanvasRef = useRef<HTMLCanvasElement>(null);
   const calloutButtonsRef = useRef<(HTMLButtonElement | null)[]>([]);
@@ -180,11 +192,11 @@ export function EclipseGlobe({
   const detailPopoverRef = useRef<HTMLDivElement>(null);
 
   const reducedMotion = useReducedMotion();
-  const isTouchDevice = useMedia("(hover: none)");
 
   const [webglReady, setWebglReady] = useState(true);
-  const [hasInteracted, setHasInteracted] = useState(false);
   const [inspectedNodeId, setInspectedNodeId] = useState<string | null>(null);
+  const hasInteractedRef = useRef(false);
+  const interactedAtRef = useRef<number | null>(null);
 
   const nodesRef = useRef(nodes);
   nodesRef.current = nodes;
@@ -209,6 +221,10 @@ export function EclipseGlobe({
   const selectAndInspect = (record: ProjectRecord) => {
     const idx = nodes.findIndex((item) => item.id === record.id);
     if (idx >= 0) shockwaveRef.current = { starIndex: idx, startedAt: performance.now() };
+    if (!hasInteractedRef.current) {
+      hasInteractedRef.current = true;
+      interactedAtRef.current = performance.now();
+    }
     targetQuatRef.current = viewQuatForTarget(record.lat, record.lon);
     onSelectNode(record.id, false);
     setInspectedNodeId(record.id);
@@ -280,16 +296,24 @@ export function EclipseGlobe({
       edges: con.edges,
     }));
 
-    let viewQuat: Quat = viewQuatForTarget(2, matchFlowPlanet ? 122 : 112);
+    const initPortrait =
+      typeof window !== "undefined" && window.innerWidth < 900 && window.innerHeight > window.innerWidth;
+    let viewQuat: Quat = viewQuatForTarget(
+      2,
+      matchFlowPlanet ? (initPortrait ? 134 : 122) : 112,
+    );
     let metrics: StageMetrics = { width: 1200, height: 760, centerX: 820, centerY: 380, radius: 300 };
     let prevTimestamp = performance.now();
     const mountTimestamp = prevTimestamp;
     let pauseAutoSpinUntil = -Infinity;
+    let cueStartedAt: number | null = null;
+    let greetPhaseRad = 0;
 
     const angularVel = { yaw: 0, pitch: 0 };
     const trackball = {
       active: false,
       pointerId: -1,
+      isTouch: false,
       lastX: 0,
       lastY: 0,
       travelPx: 0,
@@ -301,6 +325,8 @@ export function EclipseGlobe({
       const qYaw = quatFromAxisAngle(0, 1, 0, yawRad);
       const qPitch = quatFromAxisAngle(1, 0, 0, pitchRad);
       viewQuat = quatNormalize(quatMultiply(quatMultiply(qYaw, qPitch), viewQuat));
+      // Pan the distant cosmic background sky in smooth 3D parallax with globe motion
+      addSkyDrift(yawRad * 310, pitchRad * 310);
     };
 
     const enqueueFrame = () => {
@@ -311,6 +337,10 @@ export function EclipseGlobe({
     };
 
     nudgeRotationRef.current = (yawRad: number, pitchRad: number) => {
+      if (!hasInteractedRef.current) {
+        hasInteractedRef.current = true;
+        interactedAtRef.current = performance.now();
+      }
       targetQuatRef.current = null;
       pauseAutoSpinUntil = performance.now() + 2100;
       rotateScreenSpace(yawRad, pitchRad);
@@ -326,6 +356,16 @@ export function EclipseGlobe({
         el.height = Math.round(metrics.height * dpr);
         el.style.width = `${metrics.width}px`;
         el.style.height = `${metrics.height}px`;
+      }
+      // Lock touch-action: none strictly over the circular planet disc so dragging the globe
+      // in ANY direction (including up/down) rotates the planet without scrolling the page,
+      // while swiping outside the globe scrolls the page normally.
+      if (sphereHitRef.current) {
+        const hitR = metrics.radius * 1.02;
+        sphereHitRef.current.style.left = `${(metrics.centerX - hitR).toFixed(1)}px`;
+        sphereHitRef.current.style.top = `${(metrics.centerY - hitR).toFixed(1)}px`;
+        sphereHitRef.current.style.width = `${(hitR * 2).toFixed(1)}px`;
+        sphereHitRef.current.style.height = `${(hitR * 2).toFixed(1)}px`;
       }
       calloutDimsRef.current = calloutButtonsRef.current.map((btn) => ({
         width: btn?.offsetWidth || 112,
@@ -356,6 +396,15 @@ export function EclipseGlobe({
       const staticMode = reducedMotionRef.current || !renderer;
       let needsNextFrame = false;
 
+      // Detect rising edge into the interactive scroll dwell zone: trigger purely visual
+      // greeting sway, orbital gimbal arcs, rim ripple & Cassiopeia star shimmer wave (zero text)
+      const isInteractiveNow = interactiveActiveRef ? interactiveActiveRef.current : true;
+      if (!staticMode && isInteractiveNow && cueStartedAt === null && !hasInteractedRef.current) {
+        cueStartedAt = timestamp;
+        greetPhaseRad = 0;
+        pauseAutoSpinUntil = timestamp + 1650;
+      }
+
       if (!trackball.active && renderer) {
         const goal = targetQuatRef.current;
         if (goal) {
@@ -375,17 +424,31 @@ export function EclipseGlobe({
             }
           }
         } else {
-          const speed = Math.hypot(angularVel.yaw, angularVel.pitch);
-          if (speed > 2e-6) {
-            rotateScreenSpace(angularVel.yaw * deltaMs, angularVel.pitch * deltaMs);
-            const friction = Math.pow(0.93, deltaMs / 16.7);
-            angularVel.yaw *= friction;
-            angularVel.pitch *= friction;
-            needsNextFrame = true;
-          } else if (!staticMode && timestamp > pauseAutoSpinUntil) {
-            const spinStep = IDLE_SPIN_DEG_PER_SEC * DEG_TO_RAD * (deltaMs / 1000);
-            const worldSpin = quatFromAxisAngle(0, 1, 0, -spinStep);
-            viewQuat = quatNormalize(quatMultiply(viewQuat, worldSpin));
+          // Gentle one-time kinetic greeting nudge so visitors immediately feel the planet is live 3D
+          const cueAgeMs = cueStartedAt !== null ? timestamp - cueStartedAt : -1;
+          if (!staticMode && !hasInteractedRef.current && cueAgeMs >= 0 && cueAgeMs < 1380) {
+            const u = cueAgeMs / 1380;
+            const envelope = Math.sin(u * Math.PI);
+            const targetAngle = Math.sin(u * Math.PI * 2) * 0.115 * envelope;
+            const deltaAngle = targetAngle - greetPhaseRad;
+            greetPhaseRad = targetAngle;
+            if (Math.abs(deltaAngle) > 1e-5) {
+              rotateScreenSpace(deltaAngle, deltaAngle * 0.18);
+            }
+          } else {
+            const speed = Math.hypot(angularVel.yaw, angularVel.pitch);
+            if (speed > 2e-6) {
+              rotateScreenSpace(angularVel.yaw * deltaMs, angularVel.pitch * deltaMs);
+              const friction = Math.pow(0.93, deltaMs / 16.7);
+              angularVel.yaw *= friction;
+              angularVel.pitch *= friction;
+              needsNextFrame = true;
+            } else if (!staticMode && timestamp > pauseAutoSpinUntil) {
+              const spinStep = IDLE_SPIN_DEG_PER_SEC * DEG_TO_RAD * (deltaMs / 1000);
+              const worldSpin = quatFromAxisAngle(0, 1, 0, -spinStep);
+              viewQuat = quatNormalize(quatMultiply(viewQuat, worldSpin));
+              addSkyDrift(-spinStep * 135, 0);
+            }
           }
         }
       }
@@ -407,7 +470,10 @@ export function EclipseGlobe({
       projectedStarsRef.current = screenNodes;
       const highlightedId = hoveredIdRef.current ?? activeIdRef.current;
 
-      const radialLift = Math.max(44, Math.min(68, metrics.radius * 0.24));
+      const isPortraitCompact = metrics.width < 900 && metrics.height > metrics.width;
+      const radialLift = isPortraitCompact
+        ? Math.max(30, Math.min(46, metrics.radius * 0.25))
+        : Math.max(44, Math.min(68, metrics.radius * 0.24));
       const callouts: CalloutBox[] = records.map((record, index) => {
         const sp = screenNodes[index];
         const dims = calloutDimsRef.current[index] ?? { width: 112, height: 36 };
@@ -433,7 +499,11 @@ export function EclipseGlobe({
         };
       });
 
-      resolveCalloutCollisions(callouts, screenNodes, metrics.width, metrics.height);
+      const safeMinTop = isPortraitCompact
+        ? Math.max(84, Math.round(metrics.centerY - metrics.radius - 26))
+        : 84;
+      const safeMinBottom = isPortraitCompact ? 64 : 48;
+      resolveCalloutCollisions(callouts, screenNodes, metrics.width, metrics.height, safeMinTop, safeMinBottom);
 
       const ctx = chartEl.getContext("2d");
       if (ctx) {
@@ -587,6 +657,107 @@ export function EclipseGlobe({
           }
         }
 
+        // Non-text interactive visual cues (activation rim ripple + delicate 360° orbital gimbal arcs + starlight wave)
+        if (!staticMode && cueStartedAt !== null) {
+          const cueAge = timestamp - cueStartedAt;
+
+          // 1. Expanding golden activation ring from the planet rim when entering interactive dwell
+          if (cueAge >= 0 && cueAge < 1150) {
+            const u = cueAge / 1150;
+            const ease = 1 - Math.pow(1 - u, 3);
+            const rRing = metrics.radius * (1.0 + ease * 0.16);
+            const ringAlpha = Math.sin(u * Math.PI) * 0.48;
+            ctx.save();
+            ctx.strokeStyle = `rgba(242, 232, 87, ${ringAlpha.toFixed(3)})`;
+            ctx.lineWidth = 1.6 * (1 - u * 0.5);
+            ctx.beginPath();
+            ctx.arc(metrics.centerX, metrics.centerY, rRing, 0, Math.PI * 2);
+            ctx.stroke();
+            ctx.restore();
+          }
+
+          // 2. Sequential starlight ripple hopping across all 5 Cassiopeia stars (β -> α -> γ -> δ -> ε)
+          const rippleOrder = [0, 1, 3, 2, 4];
+          for (let step = 0; step < rippleOrder.length; step++) {
+            const starAge = cueAge - (220 + step * 145);
+            if (starAge < 0 || starAge > 760) continue;
+            const starIdx = rippleOrder[step];
+            const pt = screenNodes[starIdx];
+            const rec = records[starIdx];
+            if (!pt || pt.z < 0.08 || !rec) continue;
+            const su = starAge / 760;
+            const se = 1 - Math.pow(1 - su, 3);
+            const sr = 7 + se * 28;
+            const sa = (1 - su) * 0.72;
+            ctx.save();
+            ctx.strokeStyle = rec.isContributor
+              ? `rgba(45, 212, 191, ${sa.toFixed(3)})`
+              : `rgba(254, 240, 199, ${sa.toFixed(3)})`;
+            ctx.lineWidth = 1.25 - su * 0.5;
+            ctx.beginPath();
+            ctx.arc(pt.x, pt.y, sr, 0, Math.PI * 2);
+            ctx.stroke();
+            ctx.restore();
+          }
+
+          // 3. Delicate 360° curved orbital gimbal arc arrows on the planet flank (purely visual, fades out once interacted)
+          const fadeIn = Math.min(1, cueAge / 650);
+          const fadeOut =
+            interactedAtRef.current !== null
+              ? Math.max(0, 1 - (timestamp - interactedAtRef.current) / 420)
+              : 1;
+          const gimbalAlpha = fadeIn * fadeOut;
+
+          if (gimbalAlpha > 0.02) {
+            const orbitR = metrics.radius * 1.075;
+            const sway = Math.sin(elapsedSec * 2.1) * 0.055;
+            const breathe = 0.42 + 0.22 * Math.sin(elapsedSec * 2.6);
+            const alpha = gimbalAlpha * breathe;
+
+            // Draw subtle curved double-ended drag arc along the visible western crescent rim (always in-frame on desktop & mobile!)
+            const drawGimbalArc = (centerAng: number, halfSpan: number) => {
+              const a0 = centerAng - halfSpan + sway;
+              const a1 = centerAng + halfSpan + sway;
+              ctx.save();
+              ctx.strokeStyle = `rgba(254, 240, 199, ${alpha.toFixed(3)})`;
+              ctx.lineWidth = 1.25;
+              ctx.setLineDash([4, 5]);
+              ctx.beginPath();
+              ctx.arc(metrics.centerX, metrics.centerY, orbitR, a0, a1);
+              ctx.stroke();
+              ctx.setLineDash([]);
+
+              // Minimalist chevron arrowheads at both ends of the orbital arc
+              const drawChevron = (ang: number, dir: 1 | -1) => {
+                const ex = metrics.centerX + Math.cos(ang) * orbitR;
+                const ey = metrics.centerY + Math.sin(ang) * orbitR;
+                const tangent = ang + (Math.PI / 2) * dir;
+                const len = 6.5;
+                ctx.beginPath();
+                ctx.moveTo(
+                  ex - Math.cos(tangent - 0.55) * len,
+                  ey - Math.sin(tangent - 0.55) * len,
+                );
+                ctx.lineTo(ex, ey);
+                ctx.lineTo(
+                  ex - Math.cos(tangent + 0.55) * len,
+                  ey - Math.sin(tangent + 0.55) * len,
+                );
+                ctx.stroke();
+              };
+
+              drawChevron(a0, -1);
+              drawChevron(a1, 1);
+              ctx.restore();
+            };
+
+            // Left-upper crescent flank (always visible in viewport on both desktop & portrait mobile)
+            drawGimbalArc(Math.PI * 0.96, 0.24);
+            // Lower-left equatorial arc
+            drawGimbalArc(Math.PI * 0.58, 0.18);
+          }
+        }
+
         // Selection shockwave ring
         const wave = shockwaveRef.current;
         if (wave && !staticMode) {
@@ -703,9 +874,9 @@ export function EclipseGlobe({
     const isInteractiveChild = (evt: PointerEvent) =>
       !!(evt.target as Element | null)?.closest?.("button, a, .orb-star-popover");
 
-    const pickNearestStar = (x: number, y: number): ProjectRecord | undefined => {
+    const pickNearestStar = (x: number, y: number, hitRadius = 26): ProjectRecord | undefined => {
       let chosenIdx = -1;
-      let minDist = 26;
+      let minDist = hitRadius;
       const pts = projectedStarsRef.current;
       for (let i = 0; i < pts.length; i++) {
         const pt = pts[i];
@@ -770,9 +941,15 @@ export function EclipseGlobe({
       const pos = toStageCoords(evt);
       if (!hitTestSphereSurface(metrics, pos.x, pos.y)) return;
 
+      const isTouch = evt.pointerType === "touch";
+      if (!hasInteractedRef.current) {
+        hasInteractedRef.current = true;
+        interactedAtRef.current = performance.now();
+      }
       targetQuatRef.current = null;
       trackball.active = true;
       trackball.pointerId = evt.pointerId;
+      trackball.isTouch = isTouch;
       trackball.lastX = pos.x;
       trackball.lastY = pos.y;
       trackball.lastSampleMs = performance.now();
@@ -780,24 +957,45 @@ export function EclipseGlobe({
       angularVel.yaw = 0;
       angularVel.pitch = 0;
 
-      container.setPointerCapture?.(evt.pointerId);
+      try {
+        container.setPointerCapture?.(evt.pointerId);
+      } catch {
+        // Ignore synthetic capture rejection
+      }
       container.style.cursor = "grabbing";
-      if (evt.pointerType === "mouse") evt.preventDefault();
+      evt.preventDefault();
       enqueueFrame();
     };
 
     const handlePointerRelease = (evt: PointerEvent) => {
       if (!trackball.active || evt.pointerId !== trackball.pointerId) return;
+      const wasTouch = trackball.isTouch;
+      const wasCancelled = evt.type === "pointercancel";
       trackball.active = false;
       const pos = toStageCoords(evt);
+
+      try {
+        if (container.hasPointerCapture?.(evt.pointerId)) {
+          container.releasePointerCapture(evt.pointerId);
+        }
+      } catch {
+        // Ignore capture release mismatch
+      }
+
+      if (wasCancelled) {
+        angularVel.yaw = 0;
+        angularVel.pitch = 0;
+        container.style.cursor = "";
+        return;
+      }
 
       if (performance.now() - trackball.lastSampleMs > 90) {
         angularVel.yaw = 0;
         angularVel.pitch = 0;
       }
 
-      if (trackball.travelPx < 5) {
-        const starHit = pickNearestStar(pos.x, pos.y);
+      if (trackball.travelPx < 6) {
+        const starHit = pickNearestStar(pos.x, pos.y, wasTouch ? 36 : 26);
         if (starHit) {
           const idx = nodesRef.current.findIndex((item) => item.id === starHit.id);
           if (idx >= 0) shockwaveRef.current = { starIndex: idx, startedAt: performance.now() };
@@ -809,12 +1007,18 @@ export function EclipseGlobe({
         }
       } else {
         pauseAutoSpinUntil = performance.now() + 2100;
-        setHasInteracted(true);
         setInspectedNodeId(null);
       }
 
       container.style.cursor = hoverCursor.overPlanet ? "grab" : "";
       enqueueFrame();
+    };
+
+    // Native touchmove guard for iOS Safari / mobile browsers so vertical dragging inside the globe never scrolls the page
+    const handleTouchMove = (evt: TouchEvent) => {
+      if (trackball.active) {
+        evt.preventDefault();
+      }
     };
 
     const handlePointerLeave = () => {
@@ -832,6 +1036,7 @@ export function EclipseGlobe({
     container.addEventListener("pointerup", handlePointerRelease);
     container.addEventListener("pointercancel", handlePointerRelease);
     container.addEventListener("pointerleave", handlePointerLeave);
+    container.addEventListener("touchmove", handleTouchMove, { passive: false });
 
     return () => {
       mounted = false;
@@ -845,6 +1050,7 @@ export function EclipseGlobe({
       container.removeEventListener("pointerup", handlePointerRelease);
       container.removeEventListener("pointercancel", handlePointerRelease);
       container.removeEventListener("pointerleave", handlePointerLeave);
+      container.removeEventListener("touchmove", handleTouchMove);
       renderer?.destroy();
     };
   }, [matchFlowPlanet]);
@@ -881,6 +1087,7 @@ export function EclipseGlobe({
     >
       <canvas ref={webglCanvasRef} className="orb-canvas" aria-hidden="true" />
       <canvas ref={chartCanvasRef} className="orb-overlay" aria-hidden="true" />
+      <div ref={sphereHitRef} className="orb-sphere-hit" aria-hidden="true" />
       <div ref={cursorRingRef} className="orb-reticle" data-on="false" aria-hidden="true" />
 
       {nodes.map((node, index) => {
@@ -917,12 +1124,6 @@ export function EclipseGlobe({
       })}
 
       <div className="orb-monument-foot" aria-hidden="true">
-        {webglReady && !hasInteracted && !inspectedNode && (
-          <span className="orb-drag-whisper mono">
-            <ArrowsOutCardinal size={13} aria-hidden="true" />
-            {isTouchDevice ? t(UI_COPY.globeHintTouch, lang) : t(UI_COPY.globeHintDesktop, lang)}
-          </span>
-        )}
         <span ref={coordReadoutRef} className="mono orb-coord-whisper">
           {activeNode.coordLabel}
         </span>

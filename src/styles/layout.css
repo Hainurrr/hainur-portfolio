@@ -48,17 +48,20 @@ a.btn-solar {
   min-height: 46px;
   padding: 12px 22px;
   border-radius: var(--radius-sm);
-  background: var(--solar);
+  background: linear-gradient(135deg, var(--gold) 0%, var(--solar) 100%);
   color: var(--solar-ink);
   font-weight: 700;
   font-size: 0.9375rem;
+  box-shadow: 0 8px 24px rgba(166, 38, 38, 0.24);
   transition:
     transform 0.28s var(--ease),
-    background-color 0.25s var(--ease);
+    filter 0.25s var(--ease),
+    box-shadow 0.25s var(--ease);
 }
 
 .btn-solar:hover {
-  background: #fbbf24;
+  filter: brightness(1.06);
+  box-shadow: 0 12px 28px rgba(242, 232, 87, 0.24), 0 4px 16px rgba(166, 38, 38, 0.32);
   transform: translateY(-2px);
 }
 
@@ -83,8 +86,8 @@ a.btn-outline {
 }
 
 .btn-outline:hover {
-  border-color: var(--line-solar);
-  background: rgba(245, 158, 11, 0.1);
+  border-color: var(--line-crimson);
+  background: rgba(166, 38, 38, 0.16);
   transform: translateY(-1px);
 }
 
@@ -103,8 +106,9 @@ a.btn-outline {
   transform-origin: left center;
   background: linear-gradient(
     90deg,
-    rgba(245, 158, 11, 0.72) 0%,
-    rgba(254, 240, 199, 0.24) 38%,
+    rgba(166, 38, 38, 0.85) 0%,
+    rgba(245, 158, 11, 0.72) 26%,
+    rgba(242, 232, 87, 0.45) 48%,
     rgba(245, 239, 230, 0.06) 100%
   );
 }
@@ -167,7 +171,7 @@ a.btn-outline {
 
 .top-rail {
   position: fixed;
-  inset: 0 0 auto;
+  inset: env(safe-area-inset-top, 0px) 0 auto;
   z-index: 60;
   pointer-events: none;
 }
@@ -198,9 +202,9 @@ a.btn-outline {
 }
 
 .lang-switch button {
-  min-width: 38px;
-  min-height: 36px;
-  padding: 0 9px;
+  min-width: 40px;
+  min-height: 40px;
+  padding: 0 10px;
   border-radius: 6px;
   font-size: 0.75rem;
   font-weight: 700;
@@ -214,7 +218,7 @@ a.btn-outline {
 }
 
 .lang-switch button.is-active {
-  background: var(--solar);
+  background: linear-gradient(135deg, var(--gold) 0%, var(--solar) 100%);
   color: var(--solar-ink);
 }
 
@@ -222,7 +226,7 @@ a.btn-outline {
 
 .obs-hero-runway {
   position: relative;
-  height: 700vh;
+  height: 760vh;
 }
 
 .obs-hero-runway.is-reduced {
@@ -259,6 +263,19 @@ a.btn-outline {
   will-change: transform, opacity;
 }
 
+.obs-hero-runway:not(.is-reduced) .obs-flow-shatter,
+.obs-hero-runway:not(.is-reduced) .obs-planet-layer {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
+
+.obs-hero-runway:not(.is-reduced) .obs-hero-meta {
+  opacity: 0;
+  transform: translateY(18px);
+  pointer-events: none;
+}
+
 .obs-shatter-bloom {
   position: absolute;
   inset: 0;
@@ -268,9 +285,9 @@ a.btn-outline {
   visibility: hidden;
   background: radial-gradient(
     ellipse 64% 52% at 50% 48%,
-    rgba(254, 215, 136, 0.24) 0%,
-    rgba(245, 158, 11, 0.12) 34%,
-    rgba(234, 88, 12, 0.04) 58%,
+    rgba(242, 232, 87, 0.24) 0%,
+    rgba(245, 158, 11, 0.14) 32%,
+    rgba(166, 38, 38, 0.12) 58%,
     transparent 78%
   );
   mix-blend-mode: screen;
@@ -328,7 +345,8 @@ a.btn-outline {
 }
 
 .obs-h1-accent {
-  color: var(--solar);
+  color: var(--gold);
+  text-shadow: 0 6px 34px rgba(166, 38, 38, 0.56), 0 0 22px rgba(242, 232, 87, 0.2);
 }
 
 .split-line {
@@ -349,7 +367,7 @@ a.btn-outline {
 }
 
 .obs-hero-meta {
-  max-width: min(460px, 100%);
+  max-width: min(500px, 100%);
   display: flex;
   flex-direction: column;
   align-items: flex-start;
@@ -376,6 +394,20 @@ a.btn-outline {
   color: var(--ink-soft);
 }
 
+.obs-pillars li:nth-child(2),
+.obs-pillars li:nth-child(5) {
+  border-color: var(--line-crimson);
+  background: rgba(166, 38, 38, 0.18);
+  color: #fde8e8;
+}
+
+.obs-pillars li:nth-child(3),
+.obs-pillars li:nth-child(4) {
+  border-color: rgba(242, 232, 87, 0.36);
+  background: rgba(242, 232, 87, 0.09);
+  color: #f9f4b2;
+}
+
 .obs-actions {
   margin-top: 26px;
   display: flex;
@@ -398,6 +430,17 @@ a.btn-outline {
   position: absolute;
   inset: 0;
   pointer-events: none;
+}
+
+/* Circular touch-isolation disc pinned strictly over the 3D planet: locks touch-action: none
+   inside the planet so dragging down/up/left/right rotates ONLY the globe, while touching
+   outside the planet keeps native vertical page scrolling effortless. */
+.orb-sphere-hit {
+  position: absolute;
+  border-radius: 50%;
+  z-index: 5;
+  touch-action: none;
+  background: transparent;
 }
 
 .orb-reticle {
@@ -536,8 +579,11 @@ a.btn-outline {
 .orb-star-popover {
   position: absolute;
   right: var(--gut);
-  bottom: 58px;
+  bottom: calc(58px + env(safe-area-inset-bottom, 0px));
   width: min(440px, calc(100% - var(--gut) * 2));
+  max-height: 46dvh;
+  overflow-y: auto;
+  overscroll-behavior: contain;
   z-index: 26;
   padding: 16px 18px;
   border-radius: var(--radius-md);
@@ -579,6 +625,7 @@ a.btn-outline {
   border-radius: 6px;
   font-size: 0.75rem;
   font-weight: 600;
+  line-height: 1.3;
   background: rgba(245, 158, 11, 0.16);
   color: var(--solar-bright);
 }
@@ -589,8 +636,8 @@ a.btn-outline {
 }
 
 .orb-popover-close {
-  width: 34px;
-  height: 34px;
+  width: 40px;
+  height: 40px;
   border-radius: 8px;
   border: 1px solid var(--line-strong);
   display: inline-flex;
@@ -633,8 +680,8 @@ a.btn-outline {
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  min-height: 38px;
-  padding: 0 13px;
+  min-height: 42px;
+  padding: 0 14px;
   border-radius: var(--radius-sm);
   font-size: 0.8125rem;
   font-weight: 600;
@@ -694,7 +741,7 @@ a.btn-outline {
   left: 0;
   z-index: 0;
   border-radius: var(--radius-sm);
-  background: var(--solar);
+  background: linear-gradient(135deg, var(--gold) 0%, var(--solar) 100%);
   pointer-events: none;
   opacity: 0;
 }
@@ -816,6 +863,26 @@ a.btn-outline {
   filter: drop-shadow(0 22px 38px rgba(0, 0, 0, 0.82)) drop-shadow(0 0 28px rgba(245, 158, 11, 0.36));
 }
 
+.asteroid-body[data-tone="crimson"] {
+  filter: drop-shadow(0 18px 28px rgba(0, 0, 0, 0.72)) drop-shadow(0 0 20px rgba(166, 38, 38, 0.26));
+}
+
+.asteroid-body[data-tone="crimson"]:hover,
+.asteroid-body[data-tone="crimson"]:focus-visible,
+.asteroid-body[data-tone="crimson"].is-selected {
+  filter: drop-shadow(0 22px 38px rgba(0, 0, 0, 0.82)) drop-shadow(0 0 30px rgba(166, 38, 38, 0.52));
+}
+
+.asteroid-body[data-tone="gold"] {
+  filter: drop-shadow(0 18px 28px rgba(0, 0, 0, 0.72)) drop-shadow(0 0 18px rgba(242, 232, 87, 0.18));
+}
+
+.asteroid-body[data-tone="gold"]:hover,
+.asteroid-body[data-tone="gold"]:focus-visible,
+.asteroid-body[data-tone="gold"].is-selected {
+  filter: drop-shadow(0 22px 38px rgba(0, 0, 0, 0.82)) drop-shadow(0 0 28px rgba(242, 232, 87, 0.36));
+}
+
 .asteroid-body.is-contributor {
   filter: drop-shadow(0 18px 28px rgba(0, 0, 0, 0.72)) drop-shadow(0 0 18px rgba(45, 212, 191, 0.18));
 }
@@ -842,9 +909,9 @@ a.btn-outline {
   border-radius: 999px;
   background: linear-gradient(
     90deg,
-    rgba(254, 240, 199, 0.94) 0%,
-    rgba(245, 158, 11, 0.64) 28%,
-    rgba(234, 88, 12, 0.24) 64%,
+    rgba(242, 232, 87, 0.94) 0%,
+    rgba(245, 158, 11, 0.66) 28%,
+    rgba(166, 38, 38, 0.34) 64%,
     transparent 100%
   );
   filter: blur(11px);
@@ -856,7 +923,7 @@ a.btn-outline {
     90deg,
     rgba(204, 251, 241, 0.94) 0%,
     rgba(45, 212, 191, 0.64) 30%,
-    rgba(245, 158, 11, 0.26) 66%,
+    rgba(242, 232, 87, 0.24) 66%,
     transparent 100%
   );
 }
@@ -867,8 +934,8 @@ a.btn-outline {
   z-index: 2;
   padding: 30px 32px 32px;
   background:
-    radial-gradient(ellipse 90% 60% at 24% 12%, rgba(245, 158, 11, 0.14) 0%, transparent 56%),
-    radial-gradient(circle at 82% 88%, rgba(234, 88, 12, 0.1) 0%, transparent 52%),
+    radial-gradient(ellipse 90% 60% at 24% 12%, rgba(242, 232, 87, 0.13) 0%, transparent 56%),
+    radial-gradient(circle at 82% 88%, rgba(166, 38, 38, 0.16) 0%, transparent 54%),
     linear-gradient(155deg, #1b1615 0%, #110e0f 48%, #0a090a 100%);
   display: flex;
   flex-direction: column;
@@ -876,10 +943,24 @@ a.btn-outline {
   overflow: hidden;
 }
 
+.asteroid-body[data-tone="crimson"] .asteroid-rock {
+  background:
+    radial-gradient(ellipse 92% 62% at 22% 10%, rgba(166, 38, 38, 0.28) 0%, transparent 60%),
+    radial-gradient(circle at 84% 88%, rgba(242, 232, 87, 0.1) 0%, transparent 52%),
+    linear-gradient(155deg, #1d1213 0%, #120d0e 50%, #0a0809 100%);
+}
+
+.asteroid-body[data-tone="gold"] .asteroid-rock {
+  background:
+    radial-gradient(ellipse 92% 62% at 24% 12%, rgba(242, 232, 87, 0.18) 0%, transparent 58%),
+    radial-gradient(circle at 82% 88%, rgba(166, 38, 38, 0.14) 0%, transparent 54%),
+    linear-gradient(155deg, #1c1a13 0%, #12100d 50%, #0a0908 100%);
+}
+
 .asteroid-body.is-contributor .asteroid-rock {
   background:
     radial-gradient(ellipse 90% 60% at 24% 12%, rgba(45, 212, 191, 0.18) 0%, transparent 58%),
-    radial-gradient(circle at 82% 88%, rgba(245, 158, 11, 0.1) 0%, transparent 52%),
+    radial-gradient(circle at 82% 88%, rgba(242, 232, 87, 0.09) 0%, transparent 52%),
     linear-gradient(155deg, #121d1d 0%, #0d1314 50%, #090b0c 100%);
 }
 
@@ -890,9 +971,9 @@ a.btn-outline {
   z-index: 6;
   background: radial-gradient(
     ellipse 74% 66% at 50% 42%,
-    rgba(254, 240, 199, 0.95) 0%,
+    rgba(242, 232, 87, 0.95) 0%,
     rgba(245, 158, 11, 0.78) 38%,
-    rgba(194, 65, 12, 0.5) 72%,
+    rgba(166, 38, 38, 0.58) 72%,
     rgba(17, 13, 12, 0.88) 100%
   );
   opacity: 0;
@@ -954,7 +1035,8 @@ a.btn-outline {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 8px;
+  flex-wrap: wrap;
+  gap: 6px 8px;
 }
 
 .asteroid-role {
@@ -966,6 +1048,18 @@ a.btn-outline {
   color: var(--solar-bright);
   border: 1px solid rgba(245, 158, 11, 0.28);
   white-space: nowrap;
+}
+
+.asteroid-body[data-tone="crimson"] .asteroid-role {
+  background: var(--crimson-soft);
+  color: #fde8e8;
+  border-color: var(--line-crimson);
+}
+
+.asteroid-body[data-tone="gold"] .asteroid-role {
+  background: var(--gold-soft);
+  color: var(--gold);
+  border-color: var(--line-gold);
 }
 
 .asteroid-role.is-contributor {
@@ -1017,7 +1111,7 @@ a.btn-outline {
 .asteroid-metric {
   font-size: 0.74rem;
   font-weight: 600;
-  color: var(--solar-bright);
+  color: var(--gold);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -1032,20 +1126,33 @@ a.btn-outline {
   display: inline-flex;
   align-items: center;
   gap: 4px;
-  min-height: 32px;
-  padding: 0 11px;
+  min-height: 38px;
+  padding: 0 12px;
   border-radius: 6px;
-  border: 1px solid rgba(245, 158, 11, 0.36);
-  background: rgba(245, 158, 11, 0.14);
-  color: var(--solar-bright);
+  border: 1px solid rgba(242, 232, 87, 0.38);
+  background: rgba(242, 232, 87, 0.11);
+  color: var(--gold);
   font-size: 0.75rem;
   font-weight: 600;
-  transition: background-color 0.2s, color 0.2s;
+  transition: background-color 0.2s, color 0.2s, border-color 0.2s;
 }
 
 .asteroid-direct-link:hover {
-  background: var(--solar);
+  background: var(--gold);
+  border-color: var(--gold);
   color: var(--solar-ink);
+}
+
+.asteroid-body[data-tone="crimson"] .asteroid-direct-link {
+  border-color: var(--line-crimson);
+  background: rgba(166, 38, 38, 0.24);
+  color: #fde8e8;
+}
+
+.asteroid-body[data-tone="crimson"] .asteroid-direct-link:hover {
+  background: var(--crimson);
+  border-color: var(--crimson-bright);
+  color: #ffffff;
 }
 
 .asteroid-direct-link.is-contributor {
@@ -1087,8 +1194,23 @@ a.btn-outline {
 .asteroid-body:hover .asteroid-rim-poly,
 .asteroid-body:focus-visible .asteroid-rim-poly,
 .asteroid-body.is-selected .asteroid-rim-poly {
-  stroke: rgba(254, 240, 199, 0.92);
+  stroke: rgba(242, 232, 87, 0.92);
   stroke-width: 2.2;
+}
+
+.asteroid-body[data-tone="crimson"] .asteroid-rim-poly {
+  stroke: rgba(166, 38, 38, 0.72);
+}
+
+.asteroid-body[data-tone="crimson"]:hover .asteroid-rim-poly,
+.asteroid-body[data-tone="crimson"]:focus-visible .asteroid-rim-poly,
+.asteroid-body[data-tone="crimson"].is-selected .asteroid-rim-poly {
+  stroke: rgba(242, 232, 87, 0.9);
+  stroke-width: 2.2;
+}
+
+.asteroid-body[data-tone="gold"] .asteroid-rim-poly {
+  stroke: rgba(242, 232, 87, 0.56);
 }
 
 .asteroid-body.is-contributor .asteroid-rim-poly {
@@ -1170,6 +1292,7 @@ a.btn-outline {
   border-radius: 6px;
   font-size: 0.75rem;
   font-weight: 600;
+  line-height: 1.3;
   background: rgba(245, 158, 11, 0.16);
   color: var(--solar-bright);
   border: 1px solid rgba(245, 158, 11, 0.34);
@@ -1312,10 +1435,14 @@ a.btn-outline {
   z-index: 100;
   background: rgba(4, 4, 5, 0.86);
   backdrop-filter: blur(8px);
-  padding: clamp(14px, 3.5vw, 36px);
+  padding:
+    max(14px, env(safe-area-inset-top, 14px))
+    clamp(12px, 3.5vw, 36px)
+    max(14px, env(safe-area-inset-bottom, 14px));
   display: flex;
   align-items: center;
   justify-content: center;
+  overscroll-behavior: contain;
 }
 
 .asteroid-modal {
@@ -1371,6 +1498,7 @@ a.btn-outline {
 
 .asteroid-modal-scroll {
   overflow-y: auto;
+  overscroll-behavior: contain;
   flex: 1;
 }
 
@@ -1517,10 +1645,14 @@ a.btn-outline {
   z-index: 120;
   background: rgba(4, 4, 5, 0.92);
   backdrop-filter: blur(10px);
-  padding: clamp(14px, 3.5vw, 36px);
+  padding:
+    max(14px, env(safe-area-inset-top, 14px))
+    clamp(12px, 3.5vw, 36px)
+    max(14px, env(safe-area-inset-bottom, 14px));
   display: flex;
   align-items: center;
   justify-content: center;
+  overscroll-behavior: contain;
 }
 
 .sample-zoom-panel {
@@ -1669,6 +1801,39 @@ a.btn-outline {
   color: var(--ink);
 }
 
+.profile-skill-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px;
+}
+
+.profile-skill-list li {
+  padding: 4px 10px;
+  border-radius: 6px;
+  border: 1px solid var(--line);
+  background: rgba(255, 255, 255, 0.03);
+  font-size: 0.8125rem;
+  font-weight: 500;
+  color: var(--ink-soft);
+}
+
+.profile-skill-list li:nth-child(2),
+.profile-skill-list li:nth-child(5) {
+  border-color: var(--line-crimson);
+  background: rgba(166, 38, 38, 0.16);
+  color: #fde8e8;
+}
+
+.profile-skill-list li:nth-child(3),
+.profile-skill-list li:nth-child(4) {
+  border-color: rgba(242, 232, 87, 0.36);
+  background: rgba(242, 232, 87, 0.08);
+  color: #f9f4b2;
+}
+
 .profile-portrait-col {
   width: min(360px, 100%);
   justify-self: center;
@@ -1688,6 +1853,8 @@ a.btn-outline {
 
 .dossier-stage.has-reveal {
   cursor: pointer;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
 }
 
 .dossier-canvas {
@@ -1697,11 +1864,12 @@ a.btn-outline {
   pointer-events: none;
 }
 
-/* ---------- Act IV: Beasiswa Kukar Idaman Visual Showcase ---------- */
+/* ---------- Act IV: Beasiswa Kukar Idaman Live Browser Opening Showcase ---------- */
 
 .scholarship-layout {
+  position: relative;
   display: grid;
-  grid-template-columns: minmax(0, 0.9fr) minmax(0, 560px);
+  grid-template-columns: minmax(0, 0.84fr) minmax(0, 620px);
   gap: clamp(24px, 4vw, 48px);
   align-items: center;
 }
@@ -1713,29 +1881,209 @@ a.btn-outline {
   gap: 20px;
 }
 
-.scholarship-frame {
+.scholarship-cta-row {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+/* Single unified floating catchable cursor button (exact pointer tip anchored at 20.5px 17.5px) */
+.scholarship-floating-cursor {
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 26;
+  width: 54px;
+  height: 54px;
+  margin-left: -20.5px;
+  margin-top: -17.5px;
+  padding: 0;
+  border: none;
+  border-radius: 50%;
+  background: transparent;
+  cursor: pointer;
+  opacity: 0;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+  transform-origin: 20.5px 17.5px;
+  will-change: transform, opacity;
+}
+
+.scholarship-floating-cursor:focus-visible {
+  outline: 2px solid var(--gold);
+  outline-offset: 2px;
+}
+
+.scholarship-floating-cursor.is-clicking {
+  pointer-events: none;
+}
+
+.scholarship-floating-cursor.is-open {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.scholarship-cursor-body {
   position: relative;
   display: block;
-  width: min(560px, 100%);
+  width: 100%;
+  height: 100%;
+  transform-origin: 20.5px 17.5px;
+  will-change: transform;
+}
+
+.scholarship-cursor-svg {
+  position: absolute;
+  left: 16px;
+  top: 14px;
+  display: block;
+  pointer-events: none;
+  filter: drop-shadow(0 0 12px rgba(242, 232, 87, 0.45)) drop-shadow(0 5px 10px rgba(0, 0, 0, 0.78));
+  transition: filter 0.24s var(--ease);
+}
+
+.scholarship-floating-cursor.is-roam:hover .scholarship-cursor-svg {
+  filter: drop-shadow(0 0 18px rgba(242, 232, 87, 0.78)) drop-shadow(0 5px 12px rgba(0, 0, 0, 0.8));
+}
+
+/* Luminous solar catch beacon visible only while roaming */
+.scholarship-cursor-halo {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 44px;
+  height: 44px;
+  margin-left: -22px;
+  margin-top: -22px;
+  border-radius: 50%;
+  background: radial-gradient(
+    circle,
+    rgba(242, 232, 87, 0.28) 0%,
+    rgba(245, 158, 11, 0.1) 52%,
+    transparent 74%
+  );
+  pointer-events: none;
+  transition: opacity 0.26s var(--ease), transform 0.26s var(--ease);
+}
+
+.scholarship-cursor-ring {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 38px;
+  height: 38px;
+  margin-left: -19px;
+  margin-top: -19px;
+  border-radius: 50%;
+  border: 1.5px solid rgba(242, 232, 87, 0.72);
+  pointer-events: none;
+  animation: floating-cursor-beacon 2.1s cubic-bezier(0.22, 1, 0.36, 1) infinite;
+  transition: opacity 0.24s var(--ease);
+}
+
+.scholarship-floating-cursor:not(.is-roam) .scholarship-cursor-halo,
+.scholarship-floating-cursor:not(.is-roam) .scholarship-cursor-ring {
+  opacity: 0;
+  animation: none;
+}
+
+.scholarship-floating-cursor.is-roam:hover .scholarship-cursor-halo {
+  transform: scale(1.22);
+}
+
+@keyframes floating-cursor-beacon {
+  0% {
+    transform: scale(0.76);
+    opacity: 0.85;
+  }
+  100% {
+    transform: scale(1.75);
+    opacity: 0;
+  }
+}
+
+.scholarship-catch-ring {
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 24;
+  width: 34px;
+  height: 34px;
+  margin-left: -17px;
+  margin-top: -17px;
+  border-radius: 50%;
+  border: 2px solid var(--gold);
+  box-shadow: 0 0 18px rgba(242, 232, 87, 0.65);
+  pointer-events: none;
+  opacity: 0;
+  will-change: transform, opacity;
+}
+
+.scholarship-slot {
+  width: min(620px, 100%);
   justify-self: end;
+}
+
+/* Interactive cursor click visual feedback on "Buka Halaman" */
+.scholarship-link-btn[data-demo-hover="true"] {
+  filter: brightness(1.1);
+  box-shadow: 0 12px 30px rgba(242, 232, 87, 0.34), 0 4px 16px rgba(166, 38, 38, 0.36);
+}
+
+.scholarship-link-btn[data-demo-press="true"] {
+  filter: brightness(1.16);
+}
+
+.scholarship-click-ripple {
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 23;
+  width: 30px;
+  height: 30px;
+  margin-left: -15px;
+  margin-top: -15px;
+  border-radius: 50%;
+  border: 2px solid var(--gold);
+  box-shadow: 0 0 16px rgba(242, 232, 87, 0.55);
+  pointer-events: none;
+  opacity: 0;
+  will-change: transform, opacity;
+}
+
+.scholarship-frame {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
   border-radius: var(--radius-lg);
-  border: 1px solid var(--line-solar);
-  background: var(--bg-card);
+  border: 1px solid rgba(242, 232, 87, 0.44);
+  background: #0d0a0b;
   overflow: hidden;
+  box-shadow: 0 22px 52px rgba(0, 0, 0, 0.62), 0 0 30px rgba(245, 158, 11, 0.18);
   transform: perspective(1000px) rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg));
-  transition: border-color 0.28s, transform 0.32s var(--ease);
+  transition: border-color 0.32s, box-shadow 0.32s, transform 0.32s var(--ease);
+  will-change: transform, opacity;
+}
+
+/* Browser window stays completely hidden until explicitly opened by click */
+.honors-sec .scholarship-frame:not(.is-open) {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
 }
 
 .scholarship-frame::before {
   content: "";
   position: absolute;
   inset: 0;
-  z-index: 2;
+  z-index: 4;
   pointer-events: none;
   opacity: 0;
   background: radial-gradient(
     360px circle at var(--mx, 50%) var(--my, 50%),
-    rgba(254, 240, 199, 0.12),
+    rgba(242, 232, 87, 0.14),
     transparent 62%
   );
   transition: opacity 0.3s;
@@ -1743,6 +2091,186 @@ a.btn-outline {
 
 .scholarship-frame[data-spot="true"]::before {
   opacity: 1;
+}
+
+.scholarship-frame:hover {
+  border-color: var(--gold);
+  box-shadow: 0 24px 54px rgba(166, 38, 38, 0.28);
+  transform: perspective(1000px) rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg)) translateY(-2px);
+}
+
+.scholarship-chrome {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 9px 12px;
+  border-bottom: 1px solid var(--line);
+  background: #141011;
+}
+
+.scholarship-dots {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  flex: 0 0 auto;
+}
+
+.scholarship-dots span {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: rgba(245, 239, 230, 0.22);
+}
+
+.scholarship-dots span:nth-child(1) {
+  background: rgba(220, 56, 56, 0.78);
+}
+
+.scholarship-dots span:nth-child(2) {
+  background: rgba(245, 158, 11, 0.8);
+}
+
+.scholarship-dots span:nth-child(3) {
+  background: rgba(45, 212, 191, 0.78);
+}
+
+.scholarship-address {
+  flex: 1 1 auto;
+  min-width: 0;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 30px;
+  padding: 0 10px;
+  border-radius: 6px;
+  border: 1px solid rgba(245, 239, 230, 0.1);
+  background: rgba(7, 6, 7, 0.72);
+  font-size: 0.72rem;
+  color: var(--ink-soft);
+  transition: border-color 0.2s, color 0.2s;
+}
+
+.scholarship-address span:first-of-type {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.scholarship-address svg {
+  flex: 0 0 auto;
+  color: var(--gold);
+}
+
+.scholarship-address:hover {
+  border-color: var(--line-solar);
+  color: var(--gold);
+}
+
+.scholarship-chrome-actions {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  flex: 0 0 auto;
+}
+
+.scholarship-chrome-btn {
+  width: 32px;
+  height: 32px;
+  border-radius: 6px;
+  border: 1px solid var(--line);
+  background: rgba(255, 255, 255, 0.03);
+  color: var(--ink-soft);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: border-color 0.2s, color 0.2s, background-color 0.2s;
+}
+
+.scholarship-chrome-btn:hover {
+  border-color: var(--line-solar);
+  background: rgba(245, 158, 11, 0.12);
+  color: var(--gold);
+}
+
+.scholarship-chrome-btn.is-close:hover {
+  border-color: var(--line-crimson);
+  background: rgba(166, 38, 38, 0.22);
+  color: #fde8e8;
+}
+
+.scholarship-load-track {
+  position: relative;
+  width: 100%;
+  height: 2px;
+  background: rgba(245, 239, 230, 0.06);
+  overflow: hidden;
+}
+
+.scholarship-load-bar {
+  display: block;
+  width: 100%;
+  height: 100%;
+  transform-origin: left center;
+  transform: scaleX(0);
+  opacity: 0;
+  background: linear-gradient(90deg, var(--crimson) 0%, var(--solar) 55%, var(--gold) 100%);
+}
+
+.scholarship-viewport {
+  position: relative;
+  display: block;
+  width: 100%;
+  aspect-ratio: 1440 / 736;
+  background: #0a0809;
+  overflow: hidden;
+}
+
+.scholarship-standby {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  background:
+    radial-gradient(circle at 50% 45%, rgba(245, 158, 11, 0.1) 0%, transparent 62%),
+    #0a0809;
+  color: var(--ink-muted);
+  font-size: 0.78rem;
+  letter-spacing: 0.06em;
+  pointer-events: none;
+}
+
+.scholarship-standby-pulse {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  border: 1.5px solid rgba(242, 232, 87, 0.46);
+  border-top-color: var(--gold);
+  animation: scholarship-spin 1.2s linear infinite;
+}
+
+@keyframes scholarship-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.scholarship-page-stage {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  transform-origin: 50% 94%;
+  will-change: transform, opacity;
+}
+
+.scholarship-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
 }
 
 .scholarship-glint {
@@ -1754,40 +2282,11 @@ a.btn-outline {
   background: linear-gradient(
     108deg,
     transparent 0%,
-    rgba(254, 240, 199, 0.08) 40%,
-    rgba(254, 240, 199, 0.26) 50%,
+    rgba(242, 232, 87, 0.09) 40%,
+    rgba(242, 232, 87, 0.28) 50%,
     transparent 64%
   );
   transform: translateX(-140%);
-}
-
-.scholarship-frame:hover {
-  border-color: var(--solar);
-  transform: perspective(1000px) rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg)) translateY(-2px);
-}
-
-.scholarship-img {
-  width: 100%;
-  height: auto;
-  display: block;
-  transition: transform 0.55s var(--ease);
-}
-
-.scholarship-frame:hover .scholarship-img {
-  transform: scale(1.015);
-}
-
-.scholarship-bar {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
-  padding: 11px 16px;
-  border-top: 1px solid var(--line);
-  background: var(--bg-elevated);
-  font-size: 0.78rem;
-  color: var(--solar-bright);
-  word-break: break-all;
 }
 
 /* ---------- Act V: Solar Eclipse Horizon Contact Finale ---------- */
@@ -1833,9 +2332,9 @@ a.btn-outline {
   background: radial-gradient(
     ellipse at 50% 62%,
     rgba(7, 6, 7, 1) 0 48%,
-    rgba(254, 240, 199, 0.52) 50%,
-    rgba(245, 158, 11, 0.24) 55%,
-    rgba(234, 88, 12, 0.08) 68%,
+    rgba(242, 232, 87, 0.56) 50%,
+    rgba(245, 158, 11, 0.26) 55%,
+    rgba(166, 38, 38, 0.22) 68%,
     transparent 78%
   );
 }
@@ -1896,7 +2395,7 @@ a.btn-outline {
   opacity: 0;
   background: radial-gradient(
     280px circle at var(--mx, 50%) var(--my, 50%),
-    rgba(245, 158, 11, 0.14),
+    rgba(242, 232, 87, 0.14),
     transparent 64%
   );
   transition: opacity 0.28s;
@@ -1910,14 +2409,27 @@ a.btn-outline {
   );
 }
 
+.channel-tile:nth-child(3)::before {
+  background: radial-gradient(
+    280px circle at var(--mx, 50%) var(--my, 50%),
+    rgba(166, 38, 38, 0.24),
+    transparent 64%
+  );
+}
+
 .channel-tile[data-spot="true"]::before {
   opacity: 1;
 }
 
 .channel-tile:hover {
   transform: translateY(-3px);
-  border-color: var(--line-solar);
-  background: #1c1512;
+  border-color: var(--line-gold);
+  background: #1c1812;
+}
+
+.channel-tile:nth-child(3):hover {
+  border-color: var(--line-crimson);
+  background: #1c1112;
 }
 
 .channel-tile-wa:hover {
@@ -2009,8 +2521,23 @@ a.btn-outline {
     grid-template-columns: 1fr;
   }
 
-  .scholarship-frame {
+  .scholarship-head {
+    padding-bottom: 14px;
+  }
+
+  .scholarship-slot {
     justify-self: start;
+    width: 100%;
+    transition: max-height 0.45s var(--ease);
+  }
+
+  .scholarship-slot:not(.is-open) {
+    max-height: 0;
+    overflow: hidden;
+  }
+
+  .scholarship-slot.is-open {
+    max-height: 520px;
   }
 
   .channel-tiles {
@@ -2020,12 +2547,17 @@ a.btn-outline {
 
 @media (max-width: 859px) {
   .obs-flow-layer {
-    mask-image: linear-gradient(180deg, transparent 0%, black 16%, black 84%, transparent 100%);
-    -webkit-mask-image: linear-gradient(180deg, transparent 0%, black 16%, black 84%, transparent 100%);
+    mask-image: linear-gradient(180deg, transparent 0%, black 12%, black 88%, transparent 100%);
+    -webkit-mask-image: linear-gradient(180deg, transparent 0%, black 12%, black 88%, transparent 100%);
+  }
+
+  .obs-flow-shatter {
+    mask-image: radial-gradient(ellipse 96% 80% at 52% 68%, black 42%, rgba(0, 0, 0, 0.72) 66%, transparent 98%);
+    -webkit-mask-image: radial-gradient(ellipse 96% 80% at 52% 68%, black 42%, rgba(0, 0, 0, 0.72) 66%, transparent 98%);
   }
 
   .obs-hero-runway {
-    height: 460vh;
+    height: 520vh;
   }
 
   .works-sec {
@@ -2108,15 +2640,23 @@ a.btn-outline {
     width: 100%;
   }
 
-  .scholarship-bar {
-    font-size: 0.72rem;
-    padding: 10px 12px;
+  .scholarship-chrome {
+    padding: 8px 10px;
+    gap: 8px;
   }
 
-  .scholarship-bar span {
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
+  .scholarship-dots {
+    display: none;
+  }
+
+  .scholarship-address {
+    font-size: 0.68rem;
+    min-height: 36px;
+  }
+
+  .scholarship-chrome-btn {
+    width: 38px;
+    height: 38px;
   }
 
   .asteroid-modal {
@@ -2159,9 +2699,15 @@ a.btn-outline {
   }
 }
 
+@media (hover: none) {
+  .asteroid-sample-zoom {
+    opacity: 0.92;
+  }
+}
+
 @media (max-width: 480px) {
   .obs-h1 {
-    font-size: clamp(1.95rem, 9.2vw, 2.55rem);
+    font-size: clamp(1.78rem, 8.6vw, 2.55rem);
   }
 
   .ed-filter-bar {
@@ -2175,20 +2721,20 @@ a.btn-outline {
   }
 
   .asteroid-rock {
-    padding: 28px 30px 28px;
+    padding: 24px 22px 24px;
     gap: 10px;
   }
 
   .asteroid-media {
-    width: calc(100% - 20px);
+    width: calc(100% - 14px);
   }
 
   .asteroid-info h3 {
-    font-size: 1.06rem;
+    font-size: 1.04rem;
   }
 
   .asteroid-foot {
-    padding: 9px 14px 0;
+    padding: 9px 6px 0;
   }
 
   .channel-tile {
@@ -2208,5 +2754,20 @@ a.btn-outline {
   .nusa-packet,
   .nusa-radar-ping {
     display: none;
+  }
+
+  .obs-hero-runway .obs-hero-meta,
+  .obs-hero-runway .obs-planet-layer {
+    opacity: 1 !important;
+    visibility: visible !important;
+    transform: none !important;
+    pointer-events: auto !important;
+  }
+
+  .honors-sec .scholarship-frame.is-open {
+    opacity: 1 !important;
+    visibility: visible !important;
+    transform: none !important;
+    pointer-events: auto !important;
   }
 }

@@ -187,9 +187,10 @@ export function drawCelestialStar(
     grad.addColorStop(0.26, "rgba(45, 212, 191, 0.55)");
     grad.addColorStop(1, "rgba(45, 212, 191, 0)");
   } else {
-    grad.addColorStop(0, "rgba(255, 250, 235, 0.98)");
-    grad.addColorStop(0.28, "rgba(245, 158, 11, 0.58)");
-    grad.addColorStop(1, "rgba(245, 158, 11, 0)");
+    grad.addColorStop(0, "rgba(255, 252, 232, 0.98)");
+    grad.addColorStop(0.28, "rgba(242, 232, 87, 0.58)");
+    grad.addColorStop(0.62, "rgba(166, 38, 38, 0.24)");
+    grad.addColorStop(1, "rgba(166, 38, 38, 0)");
   }
   ctx.fillStyle = grad;
   ctx.beginPath();
@@ -197,7 +198,7 @@ export function drawCelestialStar(
   ctx.fill();
 
   const spikeLen = size * (isActive ? 3.4 : 2.2);
-  ctx.strokeStyle = isTeal ? "rgba(204, 251, 241, 0.86)" : "rgba(254, 240, 199, 0.9)";
+  ctx.strokeStyle = isTeal ? "rgba(204, 251, 241, 0.86)" : "rgba(242, 232, 87, 0.92)";
   ctx.lineWidth = isActive ? 1.15 : 0.85;
   ctx.beginPath();
   ctx.moveTo(x - spikeLen, y);

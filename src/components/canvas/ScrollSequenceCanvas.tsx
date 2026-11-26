@@ -56,6 +56,49 @@ export function ScrollSequenceCanvas({
       if (useHeroRect) {
         const { dx, dy, dw, dh } = computeFlowVideoRect(width, height, iw, ih);
         ctx.drawImage(img, dx, dy, dw, dh);
+
+        // Seamless edge feathering directly over the drawn 16:9 rect boundaries so bright
+        // supernova smoke/flames melt softly into #070607 space with zero hard horizontal cutoff
+        const fadeY = Math.max(44, dh * 0.28);
+        if (dy > -2) {
+          const topY = Math.max(0, dy - 2);
+          const gTop = ctx.createLinearGradient(0, topY, 0, topY + fadeY);
+          gTop.addColorStop(0, "rgba(7, 6, 7, 1)");
+          gTop.addColorStop(0.28, "rgba(7, 6, 7, 0.78)");
+          gTop.addColorStop(0.62, "rgba(7, 6, 7, 0.28)");
+          gTop.addColorStop(1, "rgba(7, 6, 7, 0)");
+          ctx.fillStyle = gTop;
+          ctx.fillRect(0, topY, width, fadeY);
+        }
+        if (dy + dh < height + 2) {
+          const botY = Math.min(height, dy + dh + 2);
+          const gBot = ctx.createLinearGradient(0, botY - fadeY, 0, botY);
+          gBot.addColorStop(0, "rgba(7, 6, 7, 0)");
+          gBot.addColorStop(0.38, "rgba(7, 6, 7, 0.28)");
+          gBot.addColorStop(0.72, "rgba(7, 6, 7, 0.78)");
+          gBot.addColorStop(1, "rgba(7, 6, 7, 1)");
+          ctx.fillStyle = gBot;
+          ctx.fillRect(0, botY - fadeY, width, fadeY);
+        }
+
+        const fadeX = Math.max(28, dw * 0.14);
+        if (dx > 1) {
+          const gLeft = ctx.createLinearGradient(dx - 2, 0, dx + fadeX, 0);
+          gLeft.addColorStop(0, "rgba(7, 6, 7, 1)");
+          gLeft.addColorStop(0.55, "rgba(7, 6, 7, 0.35)");
+          gLeft.addColorStop(1, "rgba(7, 6, 7, 0)");
+          ctx.fillStyle = gLeft;
+          ctx.fillRect(dx - 2, 0, fadeX + 2, height);
+        }
+        if (dx + dw < width - 1) {
+          const rEdge = dx + dw + 2;
+          const gRight = ctx.createLinearGradient(rEdge - fadeX, 0, rEdge, 0);
+          gRight.addColorStop(0, "rgba(7, 6, 7, 0)");
+          gRight.addColorStop(0.45, "rgba(7, 6, 7, 0.35)");
+          gRight.addColorStop(1, "rgba(7, 6, 7, 1)");
+          ctx.fillStyle = gRight;
+          ctx.fillRect(rEdge - fadeX, 0, fadeX + 2, height);
+        }
       } else {
         const scale = Math.max(width / iw, height / ih);
         const dw = iw * scale;

@@ -1,5 +1,6 @@
 import { useEffect, useRef } from "react";
 import { useReducedMotion } from "../../hooks/useReducedMotion";
+import { skyMotion } from "../../lib/skyMotion";
 
 type DustPoint = {
   x: number;
@@ -7,6 +8,7 @@ type DustPoint = {
   r: number;
   a: number;
   depth: number;
+  skyDepth: number;
   phase: number;
   warm: boolean;
 };
@@ -21,9 +23,14 @@ type ShootingStar = {
   len: number;
 };
 
+const wrap = (val: number, span: number) => {
+  const m = val % span;
+  return m < 0 ? m + span : m;
+};
+
 /**
  * Multi-depth cosmic starfield fixed softly behind the obsidian canvas.
- * Drifts subtly with scroll parallax and spawns occasional faint solar meteors.
+ * Moves with scroll parallax AND tracks 3D EclipseGlobe rotation across 3 parallax depth planes.
  */
 export function AmbientStarfield() {
   const ref = useRef<HTMLCanvasElement>(null);
@@ -35,7 +42,7 @@ export function AmbientStarfield() {
     const ctx = canvas.getContext("2d");
     if (!ctx) return;
 
-    const points: DustPoint[] = Array.from({ length: 125 }, (_, i) => {
+    const points: DustPoint[] = Array.from({ length: 170 }, (_, i) => {
       const h1 = Math.abs(Math.sin(i * 15.731 + 2.31) * 41234.567) % 1;
       const h2 = Math.abs(Math.sin(i * 67.419 + 5.12) * 28912.345) % 1;
       const h3 = Math.abs(Math.sin(i * 31.113 + 7.77) * 17321.987) % 1;
@@ -43,9 +50,10 @@ export function AmbientStarfield() {
       return {
         x: h1,
         y: h2,
-        r: 0.45 + h3 * (layer === 2 ? 1.25 : 0.85),
-        a: 0.08 + (i % 6) * 0.04,
+        r: 0.5 + h3 * (layer === 2 ? 1.45 : layer === 1 ? 1.05 : 0.7),
+        a: (layer === 2 ? 0.24 : layer === 1 ? 0.16 : 0.11) + (i % 6) * 0.048,
         depth: layer === 0 ? 0.05 : layer === 1 ? 0.12 : 0.22,
+        skyDepth: layer === 0 ? 0.26 : layer === 1 ? 0.6 : 1.08,
         phase: i * 1.17,
         warm: i % 3 !== 0,
       };
@@ -58,6 +66,8 @@ export function AmbientStarfield() {
     let dpr = Math.min(2, window.devicePixelRatio || 1);
     let scrollY = window.scrollY;
     let smoothScroll = scrollY;
+    let smoothSkyX = skyMotion.targetX;
+    let smoothSkyY = skyMotion.targetY;
     let nextMeteorAt = performance.now() + 3600;
     let meteor: ShootingStar | null = null;
     const t0 = performance.now();
@@ -95,19 +105,20 @@ export function AmbientStarfield() {
       if (!alive || document.hidden) return;
       const elapsed = (now - t0) / 1000;
       smoothScroll += (scrollY - smoothScroll) * 0.1;
+      smoothSkyX += (skyMotion.targetX - smoothSkyX) * 0.13;
+      smoothSkyY += (skyMotion.targetY - smoothSkyY) * 0.13;
 
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
       ctx.clearRect(0, 0, w, h);
 
       for (let i = 0; i < points.length; i++) {
         const p = points[i];
-        const px = p.x * w;
-        const rawY = (p.y * h - smoothScroll * p.depth) % h;
-        const py = rawY < 0 ? rawY + h : rawY;
-        const twinkle = 0.72 + 0.28 * Math.sin(elapsed * 0.9 + p.phase);
+        const px = wrap(p.x * w + smoothSkyX * p.skyDepth, w);
+        const py = wrap(p.y * h + smoothSkyY * p.skyDepth - smoothScroll * p.depth, h);
+        const twinkle = 0.7 + 0.3 * Math.sin(elapsed * 0.95 + p.phase);
 
         ctx.fillStyle = p.warm ? "#f8c97a" : "#e7ded4";
-        ctx.globalAlpha = p.a * twinkle;
+        ctx.globalAlpha = Math.min(0.88, p.a * twinkle);
         ctx.beginPath();
         ctx.arc(px, py, p.r, 0, Math.PI * 2);
         ctx.fill();

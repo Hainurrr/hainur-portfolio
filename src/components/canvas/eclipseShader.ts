@@ -127,21 +127,21 @@ void main() {
 
     float diffuse = pow(max(0.0, dot(cameraNormal, sunKeyDir)), 0.72);
     vec3 umbraTone = vec3(0.016, 0.014, 0.020);
-    vec3 basaltTone = vec3(0.145, 0.118, 0.105);
-    vec3 regolithTone = vec3(0.32, 0.23, 0.16);
-    vec3 emberDust = vec3(0.62, 0.30, 0.10);
+    vec3 basaltTone = vec3(0.145, 0.114, 0.106);
+    vec3 regolithTone = vec3(0.32, 0.22, 0.16);
+    vec3 crimsonRidge = vec3(0.651, 0.149, 0.149);
 
     vec3 albedo = mix(basaltTone, regolithTone, smoothstep(0.34, 0.72, terrain));
-    albedo += emberDust * smoothstep(0.62, 0.86, craterRelief) * 0.28;
+    albedo += crimsonRidge * smoothstep(0.62, 0.86, craterRelief) * 0.34;
 
     vec3 lit = mix(umbraTone, albedo, 0.14 + 0.86 * diffuse);
     lit *= (0.34 + 0.66 * pow(depthZ, 0.45));
-    lit += vec3(0.98, 0.76, 0.42) * graticule * (0.032 + 0.042 * depthZ);
-    lit += vec3(0.99, 0.84, 0.52) * equatorLine * 0.075;
+    lit += vec3(0.949, 0.910, 0.341) * graticule * (0.032 + 0.042 * depthZ);
+    lit += vec3(0.949, 0.910, 0.341) * equatorLine * 0.075;
 
     float fresnelRim = pow(1.0 - depthZ, 3.0);
     float diamondArc = pow(max(0.0, cos(azimuth - 2.34)), 3.2);
-    lit += vec3(1.0, 0.62, 0.18) * fresnelRim * (0.62 + 0.85 * diamondArc);
+    lit += mix(vec3(0.651, 0.149, 0.149), vec3(0.949, 0.910, 0.341), 0.55 + 0.45 * diamondArc) * fresnelRim * (0.66 + 0.88 * diamondArc);
 
     surfaceColor = lit;
     surfaceAlpha = 1.0 - smoothstep(-0.5, 0.5, limbDistanceCss * uDpr);
@@ -156,17 +156,17 @@ void main() {
 
   float flareBloom = diamondFocus * exp(-outsideCss / (58.0 * streamerMod)) * frameFade;
   float innerCorona = (0.50 * streamerMod + 0.36 * diamondFocus) * exp(-outsideCss / (28.0 * streamerMod)) * frameFade;
-  float outerCorona = (0.22 + 0.14 * diamondFocus) * exp(-outsideCss / (96.0 + 26.0 * coronaTurb)) * frameFade;
+  float outerCorona = (0.24 + 0.14 * diamondFocus) * exp(-outsideCss / (98.0 + 26.0 * coronaTurb)) * frameFade;
   float brightRing = (0.94 + 0.06 * diamondFocus) * exp(-pow(limbDistanceCss / (1.85 + 0.65 * diamondFocus), 2.0));
 
-  vec3 innerCoronaCol = vec3(0.98, 0.56, 0.12);
-  vec3 outerCoronaCol = vec3(0.74, 0.26, 0.06);
-  vec3 ringTint = mix(vec3(1.0, 0.86, 0.56), vec3(1.0, 0.98, 0.90), diamondFocus);
+  vec3 innerCoronaCol = vec3(0.96, 0.62, 0.14);
+  vec3 outerCoronaCol = vec3(0.651, 0.149, 0.149);
+  vec3 ringTint = mix(vec3(0.949, 0.910, 0.341), vec3(1.0, 0.98, 0.88), diamondFocus);
 
   vec3 coronaPremul =
     innerCoronaCol * innerCorona +
     outerCoronaCol * outerCorona * (1.0 - innerCorona) +
-    vec3(1.0, 0.92, 0.72) * flareBloom * 0.52;
+    vec3(0.949, 0.910, 0.341) * flareBloom * 0.54;
   float coronaAlpha = clamp(innerCorona + outerCorona * (1.0 - innerCorona) + flareBloom * 0.36, 0.0, 1.0);
 
   vec3 planetOverCorona = surfaceColor * surfaceAlpha + coronaPremul * (1.0 - surfaceAlpha);

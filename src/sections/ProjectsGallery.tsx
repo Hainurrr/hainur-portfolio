@@ -28,7 +28,7 @@ export type ProjectFilter = "All" | DomainCategory;
 const FILTER_OPTIONS: { key: ProjectFilter; label: { id: string; en: string } }[] = [
   { key: "All", label: UI_COPY.filterAll },
   { key: "Web Dev", label: UI_COPY.filterWeb },
-  { key: "Data & BI", label: UI_COPY.filterBI },
+  { key: "Data Analytics", label: UI_COPY.filterAnalytics },
   { key: "Info Systems", label: UI_COPY.filterIS },
 ];
 
@@ -690,6 +690,13 @@ export function ProjectsGallery({
           const shape = ASTEROID_SHAPES[idx];
           const isSelected = proj.id === activeProjectId;
           const isMatched = matchingIds.has(proj.id);
+          const tone = proj.isContributor
+            ? "teal"
+            : proj.id === "telyucan" || proj.id === "telyuji"
+              ? "crimson"
+              : proj.id === "fraud-dashboard"
+                ? "gold"
+                : "solar";
 
           if (!isFreeField && !isMatched) return null;
 
@@ -697,6 +704,7 @@ export function ProjectsGallery({
             <div
               key={proj.id}
               id={`node-${proj.id}`}
+              data-tone={tone}
               ref={(el) => {
                 asteroidRefs.current[idx] = el;
               }}
