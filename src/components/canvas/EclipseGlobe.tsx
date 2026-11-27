@@ -347,13 +347,21 @@ export function EclipseGlobe({
       enqueueFrame();
     };
 
+    let hasSized = false;
     const syncCanvasDimensions = () => {
       const bounds = container.getBoundingClientRect();
-      metrics = computeStageMetrics(bounds.width, bounds.height, matchFlowPlanet);
+      const nextMetrics = computeStageMetrics(bounds.width, bounds.height, matchFlowPlanet);
       const dpr = Math.min(2, window.devicePixelRatio || 1);
+      const targetW = Math.round(nextMetrics.width * dpr);
+      const targetH = Math.round(nextMetrics.height * dpr);
+      if (hasSized && Math.abs(glEl.width - targetW) <= 2 && Math.abs(glEl.height - targetH) <= 2) {
+        return;
+      }
+      hasSized = true;
+      metrics = nextMetrics;
       for (const el of [glEl, chartEl]) {
-        el.width = Math.round(metrics.width * dpr);
-        el.height = Math.round(metrics.height * dpr);
+        el.width = targetW;
+        el.height = targetH;
         el.style.width = `${metrics.width}px`;
         el.style.height = `${metrics.height}px`;
       }
@@ -1031,12 +1039,15 @@ export function EclipseGlobe({
       enqueueFrame();
     };
 
+    const hitDisc = sphereHitRef.current;
     container.addEventListener("pointermove", handlePointerMove);
     container.addEventListener("pointerdown", handlePointerDown);
     container.addEventListener("pointerup", handlePointerRelease);
     container.addEventListener("pointercancel", handlePointerRelease);
     container.addEventListener("pointerleave", handlePointerLeave);
-    container.addEventListener("touchmove", handleTouchMove, { passive: false });
+    // Attach non-passive touchmove ONLY on the circular planet hit disc so mobile scrolling
+    // anywhere outside the planet remains 100% hardware-composited with zero touch delay
+    hitDisc?.addEventListener("touchmove", handleTouchMove, { passive: false });
 
     return () => {
       mounted = false;
@@ -1050,7 +1061,7 @@ export function EclipseGlobe({
       container.removeEventListener("pointerup", handlePointerRelease);
       container.removeEventListener("pointercancel", handlePointerRelease);
       container.removeEventListener("pointerleave", handlePointerLeave);
-      container.removeEventListener("touchmove", handleTouchMove);
+      hitDisc?.removeEventListener("touchmove", handleTouchMove);
       renderer?.destroy();
     };
   }, [matchFlowPlanet]);

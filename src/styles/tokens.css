@@ -69,12 +69,14 @@
 html {
   scroll-behavior: smooth;
   background: var(--bg);
+  overflow-x: clip;
 }
 
 html,
 body {
   margin: 0;
   padding: 0;
+  width: 100%;
   background: var(--bg);
   color: var(--ink);
   font-family: var(--body);

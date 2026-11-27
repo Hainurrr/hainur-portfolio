@@ -72,10 +72,19 @@ export function AmbientStarfield() {
     let meteor: ShootingStar | null = null;
     const t0 = performance.now();
 
+    let hasSized = false;
     const resize = () => {
-      w = window.innerWidth;
-      h = window.innerHeight;
-      dpr = Math.min(2, window.devicePixelRatio || 1);
+      const nw = canvas.clientWidth || window.innerWidth;
+      const nh = canvas.clientHeight || window.innerHeight;
+      const nextDpr = Math.min(2, window.devicePixelRatio || 1);
+      // Skip reallocating on minor mobile address-bar-only height fluctuations
+      if (hasSized && Math.abs(nw - w) < 2 && Math.abs(nh - h) < 140 && nextDpr === dpr) {
+        return;
+      }
+      hasSized = true;
+      w = nw;
+      h = nh;
+      dpr = nextDpr;
       canvas.width = Math.round(w * dpr);
       canvas.height = Math.round(h * dpr);
       drawStatic();

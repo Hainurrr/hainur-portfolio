@@ -5,16 +5,19 @@
 
 .site-shell {
   position: relative;
-  min-width: 320px;
+  width: 100%;
+  min-width: 0;
   overflow-x: clip;
   background: var(--bg);
 }
 
 .ambient-dust {
   position: fixed;
-  inset: 0;
+  top: 0;
+  left: 0;
   width: 100%;
-  height: 100%;
+  height: 100vh;
+  height: 100lvh;
   z-index: 0;
   pointer-events: none;
 }
@@ -786,7 +789,7 @@ a.btn-outline {
 
 .asteroid-field.is-stacked {
   display: grid;
-  grid-template-columns: 1fr;
+  grid-template-columns: minmax(0, 1fr);
   gap: 24px;
 }
 
@@ -1554,7 +1557,7 @@ a.btn-outline {
 
 .asteroid-samples-grid {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 12px;
   padding-bottom: 14px;
 }
@@ -1710,7 +1713,7 @@ a.btn-outline {
 
 @media (max-width: 640px) {
   .asteroid-samples-grid {
-    grid-template-columns: 1fr;
+    grid-template-columns: minmax(0, 1fr);
   }
 }
 
@@ -1784,7 +1787,7 @@ a.btn-outline {
   padding: 14px 0;
   border-bottom: 1px solid var(--line);
   display: grid;
-  grid-template-columns: 140px 1fr;
+  grid-template-columns: 140px minmax(0, 1fr);
   gap: 12px;
   align-items: baseline;
 }
@@ -1878,6 +1881,8 @@ a.btn-outline {
   display: flex;
   flex-direction: column;
   align-items: flex-start;
+  min-width: 0;
+  max-width: 100%;
   gap: 20px;
 }
 
@@ -2022,7 +2027,14 @@ a.btn-outline {
 
 .scholarship-slot {
   width: min(620px, 100%);
+  min-width: 0;
+  max-width: 100%;
   justify-self: end;
+}
+
+.scholarship-slot-inner {
+  min-width: 0;
+  max-width: 100%;
 }
 
 /* Interactive cursor click visual feedback on "Buka Halaman" */
@@ -2057,6 +2069,8 @@ a.btn-outline {
   display: flex;
   flex-direction: column;
   width: 100%;
+  min-width: 0;
+  max-width: 100%;
   border-radius: var(--radius-lg);
   border: 1px solid rgba(242, 232, 87, 0.44);
   background: #0d0a0b;
@@ -2102,6 +2116,8 @@ a.btn-outline {
 .scholarship-chrome {
   display: flex;
   align-items: center;
+  min-width: 0;
+  max-width: 100%;
   gap: 10px;
   padding: 9px 12px;
   border-bottom: 1px solid var(--line);
@@ -2135,8 +2151,10 @@ a.btn-outline {
 }
 
 .scholarship-address {
-  flex: 1 1 auto;
+  flex: 1 1 0%;
   min-width: 0;
+  max-width: 100%;
+  overflow: hidden;
   display: inline-flex;
   align-items: center;
   gap: 6px;
@@ -2151,6 +2169,8 @@ a.btn-outline {
 }
 
 .scholarship-address span:first-of-type {
+  min-width: 0;
+  flex: 1 1 auto;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -2370,7 +2390,7 @@ a.btn-outline {
 /* 3 Balanced Direct Outreach Tiles (WhatsApp, LinkedIn & GitHub) */
 .channel-tiles {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 16px;
 }
 
@@ -2518,7 +2538,7 @@ a.btn-outline {
 
   .profile-layout,
   .scholarship-layout {
-    grid-template-columns: 1fr;
+    grid-template-columns: minmax(0, 1fr);
   }
 
   .scholarship-head {
@@ -2526,26 +2546,43 @@ a.btn-outline {
   }
 
   .scholarship-slot {
-    justify-self: start;
+    display: grid;
+    grid-template-rows: 0fr;
+    justify-self: stretch;
     width: 100%;
-    transition: max-height 0.45s var(--ease);
-  }
-
-  .scholarship-slot:not(.is-open) {
-    max-height: 0;
-    overflow: hidden;
+    min-width: 0;
+    max-width: 100%;
+    transition: grid-template-rows 0.44s var(--ease);
   }
 
   .scholarship-slot.is-open {
-    max-height: 520px;
+    grid-template-rows: 1fr;
+  }
+
+  .scholarship-slot-inner {
+    min-height: 0;
+    min-width: 0;
+    max-width: 100%;
+    overflow: hidden;
+    padding: 0;
+    transition: padding 0.36s var(--ease);
+  }
+
+  .scholarship-slot.is-open .scholarship-slot-inner {
+    padding: 4px 0 10px;
   }
 
   .channel-tiles {
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
 
 @media (max-width: 859px) {
+  .obs-hero-sticky {
+    height: 100vh;
+    height: 100svh;
+  }
+
   .obs-flow-layer {
     mask-image: linear-gradient(180deg, transparent 0%, black 12%, black 88%, transparent 100%);
     -webkit-mask-image: linear-gradient(180deg, transparent 0%, black 12%, black 88%, transparent 100%);
@@ -2557,11 +2594,17 @@ a.btn-outline {
   }
 
   .obs-hero-runway {
-    height: 520vh;
+    height: 500vh;
+    height: 500svh;
+  }
+
+  .asteroid-field.is-stacked {
+    grid-template-columns: minmax(0, 1fr);
   }
 
   .works-sec {
     margin-top: -16vh;
+    margin-top: -16svh;
     padding-top: 32px;
   }
 
@@ -2590,7 +2633,7 @@ a.btn-outline {
 
 @media (max-width: 720px) {
   .channel-tiles {
-    grid-template-columns: 1fr;
+    grid-template-columns: minmax(0, 1fr);
   }
 
   .orb-monument-foot {
@@ -2632,17 +2675,19 @@ a.btn-outline {
   }
 
   .profile-facts > div {
-    grid-template-columns: 1fr;
+    grid-template-columns: minmax(0, 1fr);
     gap: 4px;
   }
 
   .scholarship-frame {
     width: 100%;
+    max-width: 100%;
+    box-shadow: 0 14px 34px rgba(0, 0, 0, 0.56), 0 0 20px rgba(245, 158, 11, 0.14);
   }
 
   .scholarship-chrome {
-    padding: 8px 10px;
-    gap: 8px;
+    padding: 7px 8px;
+    gap: 6px;
   }
 
   .scholarship-dots {
@@ -2651,12 +2696,18 @@ a.btn-outline {
 
   .scholarship-address {
     font-size: 0.68rem;
-    min-height: 36px;
+    min-height: 34px;
+    padding: 0 8px;
+    gap: 5px;
+  }
+
+  .scholarship-chrome-actions {
+    gap: 4px;
   }
 
   .scholarship-chrome-btn {
-    width: 38px;
-    height: 38px;
+    width: 34px;
+    height: 34px;
   }
 
   .asteroid-modal {
@@ -2727,6 +2778,10 @@ a.btn-outline {
 
   .asteroid-media {
     width: calc(100% - 14px);
+  }
+
+  .asteroid-role {
+    white-space: normal;
   }
 
   .asteroid-info h3 {

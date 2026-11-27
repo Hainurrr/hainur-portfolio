@@ -66,6 +66,7 @@ export function HonorsJourney({ lang }: HonorsJourneyProps) {
   const visibleRef = useRef(true);
   const hoveredRef = useRef(false);
   const focusedRef = useRef(false);
+  const touchStartRef = useRef<{ x: number; y: number } | null>(null);
   const boundsRef = useRef<RoamBounds | null>(null);
   const clockRef = useRef(0.6);
   const speedScaleRef = useRef(1);
@@ -252,6 +253,7 @@ export function HonorsJourney({ lang }: HonorsJourneyProps) {
     if (!layout) return;
 
     const syncStaticOrInitial = () => {
+      if (phaseRef.current !== "roam") return;
       const geo = measureGeometry();
       if (!geo) return;
       if (reducedMotion) {
@@ -261,9 +263,7 @@ export function HonorsJourney({ lang }: HonorsJourneyProps) {
         const parkY = geo.isTwoCol ? geo.bounds.cy : geo.clickY;
         posRef.current = { x: parkX, y: parkY };
         rotRef.current = 0;
-        if (phaseRef.current === "roam") {
-          applyCursorPose(parkX, parkY, 0, 1, 1);
-        }
+        applyCursorPose(parkX, parkY, 0, 1, 1);
       }
     };
 
@@ -417,7 +417,7 @@ export function HonorsJourney({ lang }: HonorsJourneyProps) {
       });
       anime.set(loadBar, { scaleX: 0, opacity: 1 });
       anime.set(standby, { opacity: 1, translateY: 0 });
-      anime.set(pageStage, { opacity: 0, translateY: 22, scale: 1 });
+      anime.set(pageStage, { opacity: 0, translateY: 18, scale: 0.97 });
 
       // Subtle tactile golden catch spark right where the user caught the floating cursor
       if (showCatchBurst && catchRing) {
@@ -633,8 +633,9 @@ export function HonorsJourney({ lang }: HonorsJourneyProps) {
             {
               targets: pageStage,
               opacity: [0, 1],
-              translateY: [22, 0],
-              duration: 640,
+              translateY: [18, 0],
+              scale: [0.97, 1],
+              duration: 680,
               easing: EASE_OUT_EXPO,
             },
             "-=360",
@@ -647,13 +648,7 @@ export function HonorsJourney({ lang }: HonorsJourneyProps) {
               easing: "linear",
             },
             "-=440",
-          )
-          .add({
-            targets: pageStage,
-            scale: [1, 1.03],
-            duration: 760,
-            easing: "easeOutQuart",
-          });
+          );
 
         if (glintRef.current) {
           tl.add(
@@ -881,8 +876,26 @@ export function HonorsJourney({ lang }: HonorsJourneyProps) {
             focusedRef.current = false;
           }}
           onPointerDown={(e) => {
-            if (e.button !== 0 && e.pointerType === "mouse") return;
-            handleCatchCursor();
+            if (e.pointerType === "mouse") {
+              if (e.button !== 0) return;
+              handleCatchCursor();
+            } else {
+              touchStartRef.current = { x: e.clientX, y: e.clientY };
+            }
+          }}
+          onPointerUp={(e) => {
+            if (e.pointerType === "mouse" || !touchStartRef.current) return;
+            const moved = Math.hypot(
+              e.clientX - touchStartRef.current.x,
+              e.clientY - touchStartRef.current.y,
+            );
+            touchStartRef.current = null;
+            if (moved < 18) {
+              handleCatchCursor();
+            }
+          }}
+          onPointerCancel={() => {
+            touchStartRef.current = null;
           }}
           onClick={(e) => {
             // Keyboard activation (Enter / Space) triggers click with detail === 0
@@ -949,11 +962,12 @@ export function HonorsJourney({ lang }: HonorsJourneyProps) {
 
         {/* Browser window stays completely hidden until after the cursor clicks "Buka Halaman" */}
         <div ref={slotRef} className={`scholarship-slot ${windowOpen ? "is-open" : ""}`}>
-          <div
-            ref={browserRef}
-            className={`scholarship-frame scholarship-browser ${windowOpen ? "is-open" : ""}`}
-            aria-hidden={!windowOpen}
-          >
+          <div className="scholarship-slot-inner">
+            <div
+              ref={browserRef}
+              className={`scholarship-frame scholarship-browser ${windowOpen ? "is-open" : ""}`}
+              aria-hidden={!windowOpen}
+            >
             <div className="scholarship-chrome">
               <div className="scholarship-dots" aria-hidden="true">
                 <span />
@@ -1033,6 +1047,7 @@ export function HonorsJourney({ lang }: HonorsJourneyProps) {
                 />
               </div>
             </a>
+          </div>
           </div>
         </div>
       </div>

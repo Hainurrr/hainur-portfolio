@@ -190,11 +190,24 @@ export function ScrollSequenceCanvas({
       }
     }, 90);
 
+    let hasSized = false;
     const resize = () => {
       const box = canvas.getBoundingClientRect();
-      width = Math.max(240, box.width);
-      height = Math.max(180, box.height);
-      dpr = Math.min(2, window.devicePixelRatio || 1);
+      const nextW = Math.max(240, box.width);
+      const nextH = Math.max(180, box.height);
+      const nextDpr = Math.min(2, window.devicePixelRatio || 1);
+      if (
+        hasSized &&
+        Math.abs(nextW - width) < 2 &&
+        Math.abs(nextH - height) < 2 &&
+        nextDpr === dpr
+      ) {
+        return;
+      }
+      hasSized = true;
+      width = nextW;
+      height = nextH;
+      dpr = nextDpr;
       canvas.width = Math.round(width * dpr);
       canvas.height = Math.round(height * dpr);
       lastDrawnIdx = -1;

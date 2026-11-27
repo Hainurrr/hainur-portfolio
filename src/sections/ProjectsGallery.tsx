@@ -238,6 +238,7 @@ export function ProjectsGallery({
       const fw = fieldRect.width || 1100;
       const fh = fieldRect.height || 800;
 
+      let headSettled = true;
       if (reducedMotion) {
         smoothHead = 1;
         smoothEntry = 1;
@@ -254,6 +255,7 @@ export function ProjectsGallery({
           if (Math.abs(targetHead - smoothHead) < 0.0005) smoothHead = targetHead;
           if (Math.abs(targetEntry - smoothEntry) < 0.0005) smoothEntry = targetEntry;
         }
+        headSettled = Math.abs(targetHead - smoothHead) < 0.001;
       }
 
       const headEase = easeOutCubic(smoothHead);
@@ -476,7 +478,7 @@ export function ProjectsGallery({
         resetOverlayElements();
       }
 
-      if (alive && inView && isFreeField && !reducedMotion) {
+      if (alive && inView && !reducedMotion && (isFreeField || !headSettled)) {
         raf = requestAnimationFrame(tick);
       }
     };
